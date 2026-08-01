@@ -1,21 +1,50 @@
-#import a library to access the database
 from collections import deque
+import bisect #for prefix search
+import mmap #use later for memory mapping
+import pickle
 
-class search:
-    #nodes will be the page_id
-    #take user inputted start and end and convert to relevant page_id
-    #SQL COMMAND: SELECT page_id FROM page WHERE page_title = user_input_start
-    #SELECT page_id FROM page WHERE page_title = user_input_end
-    #set start and end to whatever the query returns
-    def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict):
-        #Bidrectional BFS explores the entire level
+#some stuff to work on:
+#check extend function, may not be correct for bidirectional bfs
+#need to implement prefix search
+#should the pickle imports below be global objects or instances?
+#memory mapping
+
+#loads in csr
+with open("forward_neighbors.bin","rb") as f:
+    forward_edges = pickle.load(f)
+with open("reverse_neighbors.bin","rb") as f:
+    reverse_edges = pickle.load(f)
+with open("forward_offsets.bin","rb") as f:
+    forward_offsets = pickle.load(f)
+with open("reverse_offsets.bin","rb") as f:
+    reverse_offsets = pickle.load(f)
+
+#titles
+with open("title_to_node.bin","rb") as f:
+    title_to_node = pickle.load(f) #before BFS title->node
+with open("titles","rb") as f:
+    titles = pickle.load(f) #after BFS node->title
+
+#for prefix search
+#with open("titles_sorted.bin","rb") as f:
+#    titles_sorted = pickle.load(f)
+#with open("nodes_sorted.bin","rb") as f:
+#    nodes_sorted = pickle.load(f)
+
+
+class WikiSearch:
+
+    def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict,
+               neighbors, offsets):
+
         level_size = len(queue)
         for _ in range(level_size):
             current = queue.popleft()
-            #SQL COMMAND: SELECT to_page_id FROM edges WHERE from_page_id = current
-            #return result of query as a list neighbors
-            neighbors = [] #placeholder
-            for neighbor in neighbors:
+            start = offsets[current]
+            end = offsets[current+1]
+            
+            for i in range(start,end):
+                neighbor = neighbors[i]
                 if neighbor not in visited:
                     path[neighbor] = current
                     visited.add(neighbor)
@@ -24,7 +53,20 @@ class search:
                     queue.append(neighbor)
         return None
 
-    def BiBFS(self, start: int, end: int):
+    def BiBFS(self, start_title: str, end_title: str):
+        if start_title in title_to_node:
+            start = title_to_node[start_title]
+        else:
+            return None
+        
+        if end_title in title_to_node:
+            end = title_to_node[end_title]
+        else:
+            return None
+
+        if(start is None or end is None):
+            return None
+        
         if(start == end):
             return [start]
 
@@ -40,14 +82,17 @@ class search:
 
         while forward_queue and backward_queue:
             if len(forward_queue) <= len(backward_queue):
-                meeting = self.extend(forward_queue,forward_path,forward_visited,backward_visited)
+                meeting = self.extend(forward_queue, forward_path, forward_visited, backward_visited,
+                                      forward_edges, forward_offsets)
                 if meeting is not None:
                     break
             else:
-                meeting = self.extend(backward_queue,backward_path,backward_visited,forward_visited)
+                meeting = self.extend(backward_queue, backward_path, backward_visited, forward_visited,
+                                      reverse_edges, reverse_offsets)
                 if meeting is not None:
                     break
-        if(meeting):
+
+        if meeting is not None:
             left_half = []
             tmp = meeting
             while tmp is not None:
@@ -61,15 +106,12 @@ class search:
                 right_half.append(tmp)
                 tmp = backward_path[tmp]
 
-            id_path = left_half + right_half
-            page_path = []
+            node_path = left_half + right_half
+            page_path = [titles[node] for node in node_path]
 
-            for node in id_path:
-                #SQL: SELECT page_title FROM page WHERE page_id = node
-                #this can be done iteratively in SQL, if done so discard for loop
-                #page_title will be in VarBin format will need to convert to string
-                #page_path.append(result)
-                break #placeholder
             return page_path
 
         return None
+
+    def prefix_search(prefix: str, limit: int): #WIP
+        return
