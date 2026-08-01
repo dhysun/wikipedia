@@ -3,7 +3,7 @@
 *though it can also be done via delete queries 
 */
 
-CREATE TABLE page_main AS
+CREATE TABLE page_filtered AS
 SELECT *
 FROM page
 WHERE page_namespace = 0;
