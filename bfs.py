@@ -54,6 +54,10 @@ class WikiSearch:
         return None
 
     def BiBFS(self, start_title: str, end_title: str):
+
+        start_title =  "0x" + start_title.encode("utf-8").hex().upper()
+        end_title =  "0x" + end_title.encode("utf-8").hex().upper()
+
         if start_title in title_to_node:
             start = title_to_node[start_title]
         else:
@@ -107,7 +111,11 @@ class WikiSearch:
                 tmp = backward_path[tmp]
 
             node_path = left_half + right_half
-            page_path = [titles[node] for node in node_path]
+            page_path = []
+
+            for node in node_path:
+                converted = bytes.fromhex(titles[node][2:]).decode("utf-8")
+                page_path.append(converted)
 
             return page_path
 
