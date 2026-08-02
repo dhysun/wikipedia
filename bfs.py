@@ -1,4 +1,5 @@
 from collections import deque
+from array import array
 import bisect #for prefix search
 import mmap #use later for memory mapping
 import pickle
@@ -10,20 +11,33 @@ import pickle
 #memory mapping
 
 #loads in csr
-with open("forward_neighbors.bin","rb") as f:
-    forward_edges = pickle.load(f)
-with open("reverse_neighbors.bin","rb") as f:
-    reverse_edges = pickle.load(f)
-with open("forward_offsets.bin","rb") as f:
-    forward_offsets = pickle.load(f)
-with open("reverse_offsets.bin","rb") as f:
-    reverse_offsets = pickle.load(f)
+num_nodes = 19101118
+num_edges = 717960658
+
+forward_offsets = array('I')
+with open("forward_offsets.bin", "rb") as f:
+    forward_offsets.fromfile(f, num_nodes + 1)
+
+forward_neighbors = array('I')
+with open("forward_neighbors.bin", "rb") as f:
+    forward_neighbors.fromfile(f, num_edges)
+
+reverse_offsets = array('I')
+with open("reverse_offsets.bin", "rb") as f:
+    reverse_offsets.fromfile(f, num_nodes + 1)
+
+reverse_neighbors = array('I')
+with open("reverse_neighbors.bin", "rb") as f:
+    reverse_neighbors.fromfile(f, num_edges)
 
 #titles
 with open("title_to_node.bin","rb") as f:
     title_to_node = pickle.load(f) #before BFS title->node
-with open("titles","rb") as f:
+
+with open("titles.bin","rb") as f:
     titles = pickle.load(f) #after BFS node->title
+
+#titles.bin,titles_offset,id_map
 
 #for prefix search
 #with open("titles_sorted.bin","rb") as f:
@@ -55,9 +69,6 @@ class WikiSearch:
 
     def BiBFS(self, start_title: str, end_title: str):
 
-        start_title =  "0x" + start_title.encode("utf-8").hex().upper()
-        end_title =  "0x" + end_title.encode("utf-8").hex().upper()
-
         if start_title in title_to_node:
             start = title_to_node[start_title]
         else:
@@ -87,12 +98,12 @@ class WikiSearch:
         while forward_queue and backward_queue:
             if len(forward_queue) <= len(backward_queue):
                 meeting = self.extend(forward_queue, forward_path, forward_visited, backward_visited,
-                                      forward_edges, forward_offsets)
+                                      forward_neighbors, forward_offsets)
                 if meeting is not None:
                     break
             else:
                 meeting = self.extend(backward_queue, backward_path, backward_visited, forward_visited,
-                                      reverse_edges, reverse_offsets)
+                                      reverse_neighbors, reverse_offsets)
                 if meeting is not None:
                     break
 
@@ -111,11 +122,7 @@ class WikiSearch:
                 tmp = backward_path[tmp]
 
             node_path = left_half + right_half
-            page_path = []
-
-            for node in node_path:
-                converted = bytes.fromhex(titles[node][2:]).decode("utf-8")
-                page_path.append(converted)
+            page_path = [titles[node] for node in node_path]
 
             return page_path
 
