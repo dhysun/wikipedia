@@ -3,12 +3,8 @@ from array import array
 import bisect #for prefix search
 import pickle
 
-
-
-
 class WikiSearch:
 
-    
     #loads in csr
     def __init__(self):
         num_nodes = 19101118
@@ -37,13 +33,13 @@ class WikiSearch:
         with open("data/titles.bin","rb") as f:
             titles = pickle.load(f) #after BFS node->title
 
-    _sorted = sorted(
-        (title.lower(), node)
-        for node, title in enumerate(titles)
-    )
+        with open("data/autocomplete.bin", "rb") as f:
+            self.autocomplete = pickle.load(f)
 
-    sorted_title_strings = [t for t, _ in _sorted]
-    sorted_nodes = [n for _, n in _sorted]
+        self.sorted_title_strings = [
+            self.titles[node].lower()
+            for node, _ in self.autocomplete
+        ]
 
     def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict,
                neighbors, offsets):
@@ -124,3 +120,32 @@ class WikiSearch:
             return page_path
 
         return None
+
+    def prefix_search(self, prefix, max_candidates=250000, limit=10):
+        prefix = prefix.lower()
+
+        left = bisect.bisect_left(
+            self.sorted_title_strings,
+            prefix
+        )
+
+        right = bisect.bisect_left(
+            self.sorted_title_strings,
+            prefix + chr(255)
+        )
+
+        if right - left > max_candidates:
+            right = left + max_candidates
+
+        candidates = self.autocomplete[left:right]
+
+        candidates = sorted(
+            candidates,
+            key=lambda x: x[1],
+            reverse=True
+        )
+
+        return [
+            (node, self.titles[node])
+            for node, _ in candidates[:limit]
+        ]
