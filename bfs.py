@@ -3,43 +3,42 @@ from array import array
 import bisect #for prefix search
 import pickle
 
+import time
+
 class WikiSearch:
 
     #loads in csr
     def __init__(self):
         num_nodes = 19101118
         num_edges = 717960658
-        
-        forward_offsets = array('I')
+
+        self.forward_offsets = array('I')
         with open("data/forward_offsets.bin", "rb") as f:
-            forward_offsets.fromfile(f, num_nodes + 1)
-        
-        forward_neighbors = array('I')
+            self.forward_offsets.fromfile(f, num_nodes + 1)
+
+        self.forward_neighbors = array('I')
         with open("data/forward_neighbors.bin", "rb") as f:
-            forward_neighbors.fromfile(f, num_edges)
-        
-        reverse_offsets = array('I')
+            self.forward_neighbors.fromfile(f, num_edges)
+
+        self.reverse_offsets = array('I')
         with open("data/reverse_offsets.bin", "rb") as f:
-            reverse_offsets.fromfile(f, num_nodes + 1)
-        
-        reverse_neighbors = array('I')
+            self.reverse_offsets.fromfile(f, num_nodes + 1)
+
+        self.reverse_neighbors = array('I')
         with open("data/reverse_neighbors.bin", "rb") as f:
-            reverse_neighbors.fromfile(f, num_edges)
-        
-        #titles
-        with open("data/title_to_node.bin","rb") as f:
-            title_to_node = pickle.load(f) #before BFS title->node
-        
-        with open("data/titles.bin","rb") as f:
-            titles = pickle.load(f) #after BFS node->title
+            self.reverse_neighbors.fromfile(f, num_edges)
+
+        with open("data/title_to_node.bin", "rb") as f:
+            self.title_to_node = pickle.load(f)
+
+        with open("data/titles.bin", "rb") as f:
+            self.titles = pickle.load(f)
 
         with open("data/autocomplete.bin", "rb") as f:
             self.autocomplete = pickle.load(f)
 
-        self.sorted_title_strings = [
-            self.titles[node].lower()
-            for node, _ in self.autocomplete
-        ]
+        with open("data/sorted_title_strings.bin", "rb") as f:
+            self.sorted_title_strings = pickle.load(f)
 
     def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict,
                neighbors, offsets):
@@ -122,6 +121,8 @@ class WikiSearch:
         return None
 
     def prefix_search(self, prefix, max_candidates=250000, limit=5):
+        # start = time.perf_counter()
+
         prefix = prefix.lower()
 
         left = bisect.bisect_left(
@@ -144,8 +145,11 @@ class WikiSearch:
             key=lambda x: x[1],
             reverse=True
         )
+        # elapsed = time.perf_counter() - start
 
-        return [
+        results = [
             (node, self.titles[node])
             for node, _ in candidates[:limit]
         ]
+
+        return results
