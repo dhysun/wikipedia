@@ -19,7 +19,7 @@
 
                     <h4 class="card-title mb-3">Search</h4>
 
-                    <form method="POST">
+                    <div>
 
                         <div class="mb-3">
                             <label for="startArticle" class="form-label">Start Article</label>
@@ -39,15 +39,38 @@
                                    placeholder="e.g. Carnegie Mellon University">
                         </div>
 
-                        <button type="submit" class="btn btn-primary">
+                        <button type="button" class="btn btn-primary" onclick="findPath()">
                             Find Path
                         </button>
+                        <script>
+                            async function findPath(){
+                                const start = document.getElementById("startArticle").value;
+                                const end = document.getElementById("endArticle").value;
 
-                    </form>
+                                const path = await fetch("/search",{
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+
+                                    body: JSON.stringify({
+                                        start: start,
+                                        end: end
+                                    })
+                                });
+                                    
+                                const data = await path.json()
+                                document.getElementById("results").textContent = data.path;
+                            }
+
+                        </script>
+
+                    </div>
 
                 </div>
             </div>
         </div>
+
 
         <div class="col-md-7">
             <div class="card">
