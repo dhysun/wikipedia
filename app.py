@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-# from .bfs import WikiSearch
+import bfs
+import autocomplete
 
 app = Flask(__name__)
 
