@@ -135,24 +135,3 @@ class WikiSearch:
             return page_path
 
         return None
-
-    def prefix_search(prefix, limit=10):
-        prefix = prefix.lower()
-
-        left = bisect.bisect_left(
-            sorted_title_strings,
-            prefix
-        )
-
-        right = bisect.bisect_left(
-            sorted_title_strings,
-            prefix + chr(255)
-        )
-
-        results = []
-
-        for i in range(left, min(right, left + limit)):
-            node = sorted_nodes[i]
-            results.append((node, titles[node]))
-
-        return results
