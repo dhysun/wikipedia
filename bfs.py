@@ -48,6 +48,14 @@ with open("data/titles.bin","rb") as f:
 
 class WikiSearch:
 
+    _sorted = sorted(
+        (title.lower(), node)
+        for node, title in enumerate(titles)
+    )
+
+    sorted_title_strings = [t for t, _ in _sorted]
+    sorted_nodes = [n for _, n in _sorted]
+
     def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict,
                neighbors, offsets):
 
@@ -128,5 +136,23 @@ class WikiSearch:
 
         return None
 
-    def prefix_search(prefix: str, limit: int): #WIP
-        return
+    def prefix_search(prefix, limit=10):
+        prefix = prefix.lower()
+
+        left = bisect.bisect_left(
+            sorted_title_strings,
+            prefix
+        )
+
+        right = bisect.bisect_left(
+            sorted_title_strings,
+            prefix + chr(255)
+        )
+
+        results = []
+
+        for i in range(left, min(right, left + limit)):
+            node = sorted_nodes[i]
+            results.append((node, titles[node]))
+
+        return results
