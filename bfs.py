@@ -5,8 +5,8 @@ import mmap #use later for memory mapping
 import pickle
 
 #some stuff to work on:
-#check extend function, may not be correct for bidirectional bfs
-#need to implement prefix search
+#check extend function, may not be correct for bidirectional bfs (2)
+#need to implement prefix search (1)
 #should the pickle imports below be global objects or instances?
 #memory mapping
 
@@ -15,26 +15,26 @@ num_nodes = 19101118
 num_edges = 717960658
 
 forward_offsets = array('I')
-with open("forward_offsets.bin", "rb") as f:
+with open("data/forward_offsets.bin", "rb") as f:
     forward_offsets.fromfile(f, num_nodes + 1)
 
 forward_neighbors = array('I')
-with open("forward_neighbors.bin", "rb") as f:
+with open("data/forward_neighbors.bin", "rb") as f:
     forward_neighbors.fromfile(f, num_edges)
 
 reverse_offsets = array('I')
-with open("reverse_offsets.bin", "rb") as f:
+with open("data/reverse_offsets.bin", "rb") as f:
     reverse_offsets.fromfile(f, num_nodes + 1)
 
 reverse_neighbors = array('I')
-with open("reverse_neighbors.bin", "rb") as f:
+with open("data/reverse_neighbors.bin", "rb") as f:
     reverse_neighbors.fromfile(f, num_edges)
 
 #titles
-with open("title_to_node.bin","rb") as f:
+with open("data/title_to_node.bin","rb") as f:
     title_to_node = pickle.load(f) #before BFS title->node
 
-with open("titles.bin","rb") as f:
+with open("data/titles.bin","rb") as f:
     titles = pickle.load(f) #after BFS node->title
 
 #titles.bin,titles_offset,id_map
