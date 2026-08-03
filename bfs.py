@@ -61,13 +61,13 @@ class WikiSearch:
 
     def BiBFS(self, start_title: str, end_title: str):
 
-        if start_title in title_to_node:
-            start = title_to_node[start_title]
+        if start_title in self.title_to_node:
+            start = self.title_to_node[start_title]
         else:
             return None
         
-        if end_title in title_to_node:
-            end = title_to_node[end_title]
+        if end_title in self.title_to_node:
+            end = self.title_to_node[end_title]
         else:
             return None
 
@@ -90,12 +90,12 @@ class WikiSearch:
         while forward_queue and backward_queue:
             if len(forward_queue) <= len(backward_queue):
                 meeting = self.extend(forward_queue, forward_path, forward_visited, backward_visited,
-                                      forward_neighbors, forward_offsets)
+                                      self.forward_neighbors, self.forward_offsets)
                 if meeting is not None:
                     break
             else:
                 meeting = self.extend(backward_queue, backward_path, backward_visited, forward_visited,
-                                      reverse_neighbors, reverse_offsets)
+                                      self.reverse_neighbors, self.reverse_offsets)
                 if meeting is not None:
                     break
 
@@ -114,7 +114,7 @@ class WikiSearch:
                 tmp = backward_path[tmp]
 
             node_path = left_half + right_half
-            page_path = [titles[node] for node in node_path]
+            page_path = [self.titles[node] for node in node_path]
 
             return page_path
 
