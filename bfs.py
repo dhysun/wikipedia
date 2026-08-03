@@ -121,7 +121,7 @@ class WikiSearch:
 
         return None
 
-    def prefix_search(self, prefix, max_candidates=250000, limit=10):
+    def prefix_search(self, prefix, max_candidates=250000, limit=5):
         prefix = prefix.lower()
 
         left = bisect.bisect_left(
