@@ -63,6 +63,13 @@
                                 document.getElementById("results").textContent = data.path;
                             }
 
+                            function swap(){    
+                                const start = document.getElementById("startArticle"); 
+                                const end = document.getElementById("endArticle");
+
+                                [start.value,end.value] = [end.value,start.value];
+                            }
+
                         </script>
 
                     </div>
