@@ -39,6 +39,9 @@ class WikiSearch:
 
         with open("data/sorted_title_strings.bin", "rb") as f:
             self.sorted_title_strings = pickle.load(f)
+        
+        with open("is_redirect_array.bin", "rb") as f:
+            self.is_redirect_array = pickle.load(f)
 
     def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict,
                neighbors, offsets):
@@ -180,6 +183,8 @@ class WikiSearch:
 
     def random_title(self):
         random_node = random.randint(0,19101117)
+        
         if self.is_redirect_array[random_node] == 1:
             random_node = self.forward_neighbors[self.offsets[random_node]]
+            
         return self.titles[random_node].replace("_"," ")
