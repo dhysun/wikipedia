@@ -176,6 +176,7 @@ class WikiSearch:
             for node, title in results:
                 if self.is_redirect_array[node] == 1:
                     node = self.forward_neighbors[self.forward_offsets[node]]
+                    node = self.forward_neighbors[self.forward_offsets[node]]
                     title = self.titles[node]
 
         # elapsed = time.perf_counter() - start
@@ -185,6 +186,7 @@ class WikiSearch:
         random_node = random.randint(0,19101117)
         
         if self.is_redirect_array[random_node] == 1:
+            random_node = self.forward_neighbors[self.forward_offsets[random_node]]
             random_node = self.forward_neighbors[self.forward_offsets[random_node]]
             
         return self.titles[random_node].replace("_"," ")
