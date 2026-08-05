@@ -182,4 +182,4 @@ class WikiSearch:
         random_node = random.randint(0,19101117)
         if self.is_redirect_array[random_node] == 1:
             random_node = self.forward_neighbors[self.offsets[random_node]]
-        return self.titles[random_node]
+        return self.titles[random_node].replace("_"," ")
