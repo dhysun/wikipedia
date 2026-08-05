@@ -21,49 +21,41 @@
 
                     <div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 position-relative">
                             <label for="startArticle" class="form-label">Start Article</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="startArticle"
-                                   name="startArticle"
-                                   placeholder="e.g. Tung Tung Tung Sahur">
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="startArticle"
+                                autocomplete="off"
+                                placeholder="e.g. Tung Tung Tung Sahur">
+
+                            <div id="startSuggestions"
+                                class="list-group position-absolute w-100"
+                                style="z-index:1000;">
+                            </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 position-relative">
                             <label for="endArticle" class="form-label">End Article</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="endArticle"
-                                   name="endArticle"
-                                   placeholder="e.g. Carnegie Mellon University">
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="endArticle"
+                                autocomplete="off"
+                                placeholder="e.g. Carnegie Mellon University">
+
+                            <div id="endSuggestions"
+                                class="list-group position-absolute w-100"
+                                style="z-index:1000;">
+                            </div>
                         </div>
 
                         <button type="button" class="btn btn-primary" onclick="findPath()">
                             Find Path
                         </button>
-                        <script>
-                            async function findPath(){
-                                const start = document.getElementById("startArticle").value;
-                                const end = document.getElementById("endArticle").value;
-
-                                const path = await fetch("/search",{
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-
-                                    body: JSON.stringify({
-                                        start: start,
-                                        end: end
-                                    })
-                                });
-                                    
-                                const data = await path.json()
-                                document.getElementById("results").textContent = data.path;
-                            }
-
-                        </script>
 
                     </div>
 
@@ -89,6 +81,70 @@
     </div>
 
     </div>
+    <script>
+        async function findPath(){
+            const start = document.getElementById("startArticle").value;
+            const end = document.getElementById("endArticle").value;
+
+            const path = await fetch("/search",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    start: start,
+                    end: end
+                })
+            });
+
+            const data = await path.json()
+            document.getElementById("results").innerHTML = 
+                data.path + "<br><br>Time taken: " + data.time_str;
+        }
+
+        function setupAutocomplete(inputId, suggestionId) {
+
+            const input = document.getElementById(inputId);
+            const suggestions = document.getElementById(suggestionId);
+
+            input.addEventListener("input", function () {
+
+                const text = input.value.trim();
+
+                if (text === "") {
+                    suggestions.innerHTML = "";
+                    return;
+                }
+
+                fetch("/autocomplete?q=" + encodeURIComponent(text))
+                    .then(response => response.json())
+                    .then(results => {
+
+                        suggestions.innerHTML = "";
+
+                        results.forEach(function(title) {
+
+                            const item = document.createElement("button");
+
+                            item.type = "button";
+                            item.className = "list-group-item list-group-item-action";
+                            item.textContent = title;
+
+                            item.onclick = function() {
+                                input.value = title;
+                                suggestions.innerHTML = "";
+                            };
+                            suggestions.appendChild(item);
+                        });
+                    });
+            });
+
+        }
+
+        setupAutocomplete("startArticle", "startSuggestions");
+        setupAutocomplete("endArticle", "endSuggestions");
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   </body>
 </html>
