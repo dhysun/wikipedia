@@ -122,7 +122,6 @@ class WikiSearch:
 
     def prefix_search(self, prefix, max_candidates=250000, limit=5):
         # start = time.perf_counter()
-
         prefix = prefix.lower()
 
         left = bisect.bisect_left(
@@ -145,11 +144,24 @@ class WikiSearch:
             key=lambda x: x[1],
             reverse=True
         )
-        # elapsed = time.perf_counter() - start
 
         results = [
             (node, self.titles[node])
             for node, _ in candidates[:limit]
         ]
 
+        # Put the title of the prefix at the top if it exists
+        if left < len(self.sorted_title_strings) and self.sorted_title_strings[left] == prefix:
+            exact_node = self.autocomplete[left][0]
+            exact_result = (exact_node, self.titles[exact_node])
+
+            for i, (node, _) in enumerate(results):
+                if node == exact_node:
+                    del results[i]
+                    break
+
+            results.insert(0, exact_result)
+            results = results[:limit]
+
+        # elapsed = time.perf_counter() - start
         return results
