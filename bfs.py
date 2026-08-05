@@ -2,7 +2,7 @@ from collections import deque
 from array import array
 import bisect #for prefix search
 import pickle
-
+import random
 import time
 
 class WikiSearch:
@@ -177,3 +177,9 @@ class WikiSearch:
 
         # elapsed = time.perf_counter() - start
         return results
+
+    def random_title(self):
+        random_node = random.randint(0,19101117)
+        if self.is_redirect_array[random_node] == 1:
+            random_node = self.forward_neighbors[self.offsets[random_node]]
+        return self.titles[random_node]
