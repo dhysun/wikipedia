@@ -73,9 +73,16 @@ class WikiSearch:
 
         if(start is None or end is None):
             return None
+
+        if(self.is_redirect_array[start] == 1):
+            start = self.forward_neighbors[self.offsets[start]]
+
+        if(self.is_redirect_array[end] == 1):
+            end = self.reverse_neighbors[self.offsets[end]]
         
         if(start == end):
             return [start]
+        
 
         meeting = None
         forward_queue = deque([start])
@@ -162,6 +169,11 @@ class WikiSearch:
 
             results.insert(0, exact_result)
             results = results[:limit]
+
+            for node,title in results:
+                if self.is_redirect_array[node] == 1:
+                    node = self.forward_neighbors[self.offsets[node]]
+                    title = self.titles[node]
 
         # elapsed = time.perf_counter() - start
         return results
