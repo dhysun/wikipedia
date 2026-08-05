@@ -3,19 +3,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel = "stylesheet", href = "style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
 
-  <header class = "site_header">
-    <div class = header_spacer></div>
-    <img src = "Wikipedia_pathfinder_logo.png" alt = "Wikipedia Pathfinder Logo"
-        class = logo>
-    <nav class = header_links>
-        <a href="#" class = "link" id="aboutLink">About</a>
-        <a href="#" class = "link">Github</a>
+  <header class="site_header">
+    <div class="header_spacer"></div>
+    <img src="{{ url_for('static', filename='site-logo.png') }}"
+         alt="Wikipedia Pathfinder Logo"
+         class="logo">
+    <nav class="header_links">
+        <a href="#" class="link" id="aboutLink">About</a>
+        <a href="#" class="link">Github</a>
     </nav>
-
   </header>
+
   <body>
     <div class="container mt-5">
 
@@ -27,36 +28,53 @@
 
                     <div>
 
-                        <div class = inputs>
-                            <div class = input_group>
-                            <input type="text"
-                                   class="article_input"
-                                   id="startArticle"
-                                   name="startArticle"
-                                   placeholder="Start Article">
-                            <button type="button" class = "shuffle">
-                                    <img src = "Shuffle_icon.png">
-                            </button>
+                        <div class="inputs">
+
+                            <div class="input_group">
+                                <input
+                                    type="text"
+                                    class="article_input"
+                                    id="startArticle"
+                                    name="startArticle"
+                                    autocomplete="off"
+                                    placeholder="Start Article">
+
+                                <button type="button" class="shuffle">
+                                    <img src="{{ url_for('static', filename='shuffle.png') }}">
+                                </button>
+
+                                <div id="startSuggestions"
+                                    class="list-group position-absolute w-100"
+                                    style="z-index:1000;">
+                                </div>
                             </div>
 
-                            <button type="button" class="swap "onclick="swap()">
-                                <img src = "Swap_Icon.png">
+                            <button type="button" class="swap" onclick="swap()">
+                                <img src="{{ url_for('static', filename='swap.png') }}">
                             </button>
-                            
-                            <div class = input_group>
-                            <input type="text"
-                                   class="article_input"
-                                   id="endArticle"
-                                   name="endArticle"
-                                   placeholder="End Article">
-                            <button type="button" class = "shuffle">
-                                    <img src = "Shuffle_icon.png"
-                                         height = 27px>
+
+                            <div class="input_group">
+                                <input
+                                    type="text"
+                                    class="article_input"
+                                    id="endArticle"
+                                    name="endArticle"
+                                    autocomplete="off"
+                                    placeholder="End Article">
+
+                                <button type="button" class="shuffle">
+                                    <img src="{{ url_for('static', filename='shuffle.png') }}">
+                                </button>
+
+                                <div id="endSuggestions"
+                                    class="list-group position-absolute w-100"
+                                    style="z-index:1000;">
+                                </div>
                             </div>
 
                         </div>
 
-                        <div class = "inputs">
+                        <div class="inputs">
                             <button type="button" class="Search" onclick="findPath()">
                                 <b>Search</b>
                             </button>
@@ -67,7 +85,6 @@
                 </div>
             </div>
         </div>
-
 
         <div class="col-md-7">
             <div class="card">
@@ -86,62 +103,70 @@
     </div>
 
     </div>
-    <div id = "aboutModal" class = "modal">
+
+    <div id="aboutModal" class="modal">
         <div class="about_content">
             <p2>placeholder</p2>
         </div>
     </div>
-    
+
     <script>
-        function swap(){    
-            const start = document.getElementById("startArticle"); 
+        function swap() {
+            const start = document.getElementById("startArticle");
             const end = document.getElementById("endArticle");
 
-            [start.value,end.value] = [end.value,start.value];
+            [start.value, end.value] = [end.value, start.value];
         }
-        
 
         const aboutLink = document.getElementById('aboutLink');
         const aboutModal = document.getElementById('aboutModal');
 
-        function openAboutModal(){
-            aboutModal.style.display = 'flex'
+        function openAboutModal() {
+            aboutModal.style.display = 'flex';
         }
 
-        function closeAboutModal(){
-            aboutModal.style.display = 'none'
+        function closeAboutModal() {
+            aboutModal.style.display = 'none';
         }
 
         aboutLink.addEventListener('click', (e) => {
             e.preventDefault();
-            openAboutModal()
+            openAboutModal();
         });
 
         aboutModal.addEventListener('click', (e) => {
             if (e.target === aboutModal) {
-                closeAboutModal()
+                closeAboutModal();
             }
         });
 
-        async function findPath(){
+        async function findPath() {
             const start = document.getElementById("startArticle").value;
             const end = document.getElementById("endArticle").value;
 
-            const path = await fetch("/search",{
+            const response = await fetch("/search", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-
                 body: JSON.stringify({
                     start: start,
                     end: end
                 })
             });
 
-            const data = await path.json()
-            document.getElementById("results").innerHTML = 
-                data.path + "<br><br>Time taken: " + data.time_str;
+            const data = await response.json();
+
+            let html = "";
+
+            // data.paths should be an array of strings
+            for (let i = 0; i < Math.min(data.paths.length, 6); i++) {
+                html += data.paths[i] + "<br><br>";
+            }
+
+            html += "Time taken: " + data.time_str;
+
+            document.getElementById("results").innerHTML = html;
         }
 
         function setupAutocomplete(inputId, suggestionId) {
@@ -176,6 +201,7 @@
                                 input.value = title;
                                 suggestions.innerHTML = "";
                             };
+
                             suggestions.appendChild(item);
                         });
                     });
@@ -187,6 +213,7 @@
         setupAutocomplete("endArticle", "endSuggestions");
 
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
   </body>

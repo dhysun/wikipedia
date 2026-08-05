@@ -40,7 +40,7 @@ class WikiSearch:
         with open("data/sorted_title_strings.bin", "rb") as f:
             self.sorted_title_strings = pickle.load(f)
         
-        with open("is_redirect_array.bin", "rb") as f:
+        with open("data/is_redirect_array.bin", "rb") as f:
             self.is_redirect_array = pickle.load(f)
 
     def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict,
@@ -77,11 +77,11 @@ class WikiSearch:
         if(start is None or end is None):
             return None
 
-        if(self.is_redirect_array[start] == 1):
-            start = self.forward_neighbors[self.offsets[start]]
+        if self.is_redirect_array[start] == 1:
+            start = self.forward_neighbors[self.forward_offsets[start]]
 
-        if(self.is_redirect_array[end] == 1):
-            end = self.reverse_neighbors[self.offsets[end]]
+        if self.is_redirect_array[end] == 1:
+            end = self.reverse_neighbors[self.reverse_offsets[end]]
         
         if(start == end):
             return [start]
@@ -173,9 +173,9 @@ class WikiSearch:
             results.insert(0, exact_result)
             results = results[:limit]
 
-            for node,title in results:
+            for node, title in results:
                 if self.is_redirect_array[node] == 1:
-                    node = self.forward_neighbors[self.offsets[node]]
+                    node = self.forward_neighbors[self.forward_offsets[node]]
                     title = self.titles[node]
 
         # elapsed = time.perf_counter() - start
@@ -185,6 +185,6 @@ class WikiSearch:
         random_node = random.randint(0,19101117)
         
         if self.is_redirect_array[random_node] == 1:
-            random_node = self.forward_neighbors[self.offsets[random_node]]
+            random_node = self.forward_neighbors[self.forward_offsets[random_node]]
             
         return self.titles[random_node].replace("_"," ")
