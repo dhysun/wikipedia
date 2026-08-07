@@ -4,7 +4,7 @@ import os
 
 HOST = "localhost"
 USER = "root"
-PASSWORD = "cr4nB399!"
+PASSWORD = "password" # Replace with your MySQL password
 DATABASE = "wikigraph"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))

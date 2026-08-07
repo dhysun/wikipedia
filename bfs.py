@@ -191,63 +191,63 @@ class WikiSearch:
 
         return title_paths
 
+    def canonical_node(self, node):
+        if self.is_redirect_array[node] == 1:
+            node = self.forward_neighbors[self.forward_offsets[node]]
+            node = self.forward_neighbors[self.forward_offsets[node]]
+        return node
+
+
     def prefix_search(self, prefix, max_candidates=250000, limit=5):
-        # start = time.perf_counter()
         prefix = prefix.lower()
 
-        left = bisect.bisect_left(
-            self.sorted_title_strings,
-            prefix
-        )
-
-        right = bisect.bisect_left(
-            self.sorted_title_strings,
-            prefix + chr(255)
-        )
+        left = bisect.bisect_left(self.sorted_title_strings, prefix)
+        right = bisect.bisect_left(self.sorted_title_strings, prefix + chr(255))
 
         if right - left > max_candidates:
             right = left + max_candidates
 
-        candidates = self.autocomplete[left:right]
-
         candidates = sorted(
-            candidates,
+            self.autocomplete[left:right],
             key=lambda x: x[1],
             reverse=True
         )
 
-        results = [
-            (node, self.titles[node])
-            for node, _ in candidates[:limit]
-        ]
-
-        # Put the title of the prefix at the top if it exists
+        exact_node = None
         if left < len(self.sorted_title_strings) and self.sorted_title_strings[left] == prefix:
             exact_node = self.autocomplete[left][0]
-            exact_result = (exact_node, self.titles[exact_node])
 
-            for i, (node, _) in enumerate(results):
-                if node == exact_node:
-                    del results[i]
-                    break
+        results = []
+        seen = set()
 
-            results.insert(0, exact_result)
-            results = results[:limit]
+        # Preserve exact match first
+        if exact_node is not None:
+            canonical = self.canonical_node(exact_node)
+            results.append((exact_node, self.titles[exact_node]))
+            seen.add(canonical)
 
-            for node, title in results:
-                if self.is_redirect_array[node] == 1:
-                    node = self.forward_neighbors[self.forward_offsets[node]]
-                    node = self.forward_neighbors[self.forward_offsets[node]]
-                    title = self.titles[node]
+        # Fill remaining slots
+        for node, _ in candidates:
+            if node == exact_node:
+                continue
 
-        # elapsed = time.perf_counter() - start
+            canonical = self.canonical_node(node)
+
+            if canonical in seen:
+                continue
+
+            seen.add(canonical)
+            results.append((node, self.titles[node]))
+
+            if len(results) == limit:
+                break
+
         return results
 
     def random_title(self):
         random_node = random.randint(0,19101117)
         
         if self.is_redirect_array[random_node] == 1:
-            random_node = self.forward_neighbors[self.forward_offsets[random_node]]
             random_node = self.forward_neighbors[self.forward_offsets[random_node]]
             
         return self.titles[random_node].replace("_"," ")

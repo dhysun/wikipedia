@@ -32,3 +32,11 @@ body {
     flex-direction: row;
   }
 }
+
+.swap i {
+    transition: color 0.15s;
+}
+
+.swap:hover i {
+    color: var(--bs-primary);
+}

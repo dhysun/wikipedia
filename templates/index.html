@@ -49,7 +49,7 @@
                       autocomplete="off"
                       placeholder="Start Article">
 
-                  <button type="button" class="btn btn-outline-secondary">
+                  <button type="button" class="btn btn-outline-secondary" onclick="getRandomStart()">
                     <i class="bi bi-shuffle fs-5"></i>
                   </button>
 
@@ -72,7 +72,7 @@
                       autocomplete="off"
                       placeholder="End Article">
 
-                  <button type="button" class="btn btn-outline-secondary">
+                  <button type="button" class="btn btn-outline-secondary" onclick="getRandomEnd()">
                     <i class="bi bi-shuffle fs-5"></i>
                   </button>
 
@@ -251,6 +251,36 @@
 
         setupAutocomplete("startArticle", "startSuggestions");
         setupAutocomplete("endArticle", "endSuggestions");
+
+        function getRandomStart() {
+            fetch("/random")
+                .then(response => response.json())
+                .then(data => {
+                    const randomTitle = data.title;
+                    const startInput = document.getElementById("startArticle");
+
+                    if (startInput.value.trim() === "") {
+                        startInput.value = randomTitle;
+                    } else {
+                        startInput.value = randomTitle;
+                    }
+                });
+        }
+
+        function getRandomEnd() {
+            fetch("/random")
+                .then(response => response.json())
+                .then(data => {
+                    const randomTitle = data.title;
+                    const endInput = document.getElementById("endArticle");
+
+                    if (endInput.value.trim() === "") {
+                        endInput.value = randomTitle;
+                    } else {
+                        endInput.value = randomTitle;
+                    }
+                });
+        }
 
     </script>
 

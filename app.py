@@ -57,6 +57,10 @@ def autocomplete():
         for _, title in results
     ])
 
+@app.route("/random")
+def random_article():
+    return jsonify({"title": wiki.random_title()})
+
 if __name__ == "__main__":
     print(app.url_map)
     app.run(debug=True,use_reloader = False)
