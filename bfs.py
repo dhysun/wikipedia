@@ -237,7 +237,7 @@ class WikiSearch:
             title_paths.append([self.titles[node] for node in path])
 
 
-        return title_paths, timeout_flag
+        return [title_paths, timeout_flag]
 
     def canonical_node(self, node):
         if self.is_redirect_array[node] == 1:

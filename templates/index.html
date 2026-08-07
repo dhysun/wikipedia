@@ -260,14 +260,19 @@
             timeLine.className = "text-muted mb-3";
             
             const pathWord = data.num_paths === 1 ? "path" : "paths";
-            timeLine.textContent = `Found ${data.num_paths} ${pathWord} in ${data.time_str}.`;
+
+            if (data.path[1]) {
+                timeLine.textContent = `Found ${data.num_paths} ${pathWord} before timing out at ${data.time_str}`;
+            } else {
+                timeLine.textContent = `Found ${data.num_paths} ${pathWord} in ${data.time_str}.`;
+            }
 
             results.appendChild(timeLine);
 
-            if (data.path) {
+            if (data.path[0]) {
                 let row;
 
-                data.path.forEach(function (path, index) {
+                data.path[0].forEach(function (path, index) {
                     const heading = document.createElement("h6");
                     heading.className = "mb-2";
                     heading.textContent = `Path ${index + 1}`;  

@@ -26,15 +26,15 @@ def search():
     n = int(data.get("n", 6))
     n = max(1, min(n, 99))
 
-    path = wiki.k_shortest_paths(start, end, n)
+    path = wiki.k_shortest_paths(start, end, n, 10)
 
-    if path is not None:
-        path = [
+    if path[0] is not None:
+        path[0] = [
             [node.replace("_", " ") for node in single_path]
-            for single_path in path
+            for single_path in path[0]
         ]
 
-    num_paths = len(path) if path is not None else 0
+    num_paths = len(path[0]) if path[0] is not None else 0
 
     elapsed_time = (time.perf_counter() - start_time) * 1000
 
