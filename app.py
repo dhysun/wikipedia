@@ -23,10 +23,13 @@ def search():
     start = (data["start"]).replace(" ", "_")
     end = (data["end"]).replace(" ", "_")
 
-    path = wiki.BiBFS(start, end)
+    path = wiki.k_shortest_paths(start, end)
 
     if path is not None:
-        path = [node.replace("_", " ") for node in path]
+        path = [
+            [node.replace("_", " ") for node in single_path]
+            for single_path in path
+        ]
 
     elapsed_time = (time.perf_counter() - start_time) * 1000
 

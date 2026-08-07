@@ -152,20 +152,40 @@
             results.innerHTML = "";
 
             if (data.path) {
-                const list = document.createElement("div");
-                list.className = "list-group mb-3";
+                let row;
 
-                data.path.forEach(function (title) {
-                    const item = document.createElement("a");
-                    item.className = "list-group-item list-group-item-action";
-                    item.href = "https://en.wikipedia.org/wiki/" + encodeURIComponent(title.replace(/ /g, "_"));
-                    item.target = "_blank";
-                    item.rel = "noopener";
-                    item.textContent = title;
-                    list.appendChild(item);
+                data.path.forEach(function (path, index) {
+                    const heading = document.createElement("h6");
+                    heading.className = "mb-2";
+                    heading.textContent = `Path ${index + 1}`;  
+
+                    if (index % 2 === 0) {
+                        row = document.createElement("div");
+                        row.className = "row";
+                        results.appendChild(row);
+                    }
+
+                    const col = document.createElement("div");
+                    col.className = "col-md-6 mb-3";
+
+                    const list = document.createElement("div");
+                    list.className = "list-group";
+
+                    path.forEach(function (title) {
+                        const item = document.createElement("a");
+                        item.className = "list-group-item list-group-item-action";
+                        item.href = "https://en.wikipedia.org/wiki/" +
+                            encodeURIComponent(title.replace(/ /g, "_"));
+                        item.target = "_blank";
+                        item.rel = "noopener";
+                        item.textContent = title;
+                        list.appendChild(item);
+                    });
+                    
+                    col.appendChild(heading);
+                    col.appendChild(list);
+                    row.appendChild(col);
                 });
-
-                results.appendChild(list);
             } else {
                 const notFound = document.createElement("p");
                 notFound.textContent = "No path found.";
