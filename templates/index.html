@@ -244,6 +244,14 @@
             const results = document.getElementById("results");
             results.innerHTML = "";
 
+            const timeLine = document.createElement("p");
+            timeLine.className = "text-muted mb-3";
+            
+            const pathWord = data.num_paths === 1 ? "path" : "paths";
+            timeLine.textContent = `Found ${data.num_paths} ${pathWord} in ${data.time_str}.`;
+
+            results.appendChild(timeLine);
+
             if (data.path) {
                 let row;
 
@@ -285,10 +293,6 @@
                 results.appendChild(notFound);
             }
 
-            const timeLine = document.createElement("p");
-            timeLine.className = "text-muted mb-0";
-            timeLine.textContent = "Time taken: " + data.time_str;
-            results.appendChild(timeLine);
         }
 
         function setupAutocomplete(inputId, suggestionId) {

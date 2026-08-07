@@ -34,9 +34,13 @@ def search():
             for single_path in path
         ]
 
+    num_paths = len(path) if path is not None else 0
+
     elapsed_time = (time.perf_counter() - start_time) * 1000
 
-    if elapsed_time >= 100:
+    if elapsed_time >= 999:
+        time_str = f"{elapsed_time / 1000:.2f} seconds"
+    elif elapsed_time >= 100:
         time_str = f"{elapsed_time:.0f} ms"
     elif elapsed_time >= 10:
         time_str = f"{elapsed_time:.1f} ms"
@@ -44,6 +48,7 @@ def search():
         time_str = f"{elapsed_time:.2f} ms"
 
     return jsonify({"path": path,
+                    "num_paths": num_paths,
                     "time_str": time_str})
 
 @app.route("/autocomplete")
