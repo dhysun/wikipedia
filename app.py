@@ -23,7 +23,10 @@ def search():
     start = (data["start"]).replace(" ", "_")
     end = (data["end"]).replace(" ", "_")
 
-    path = wiki.k_shortest_paths(start, end)
+    n = int(data.get("n", 6))
+    n = max(1, min(n, 45))
+
+    path = wiki.k_shortest_paths(start, end, n)
 
     if path is not None:
         path = [

@@ -84,11 +84,41 @@
 
               </div>
 
-              <div class="d-flex justify-content-center p-3">
-                <button type="button" class="btn btn-primary px-5 py-2 fw-bold" onclick="findPath()">
-                  Search
+              <div class="d-flex justify-content-center align-items-end gap-3 mt-3">
+
+                <button
+                    type="button"
+                    class="btn btn-primary px-5 py-2 fw-bold"
+                    onclick="findPath()">
+                    Search
                 </button>
-              </div>
+
+                <div class="path-count-container">
+
+                  <div class="path-count-wrapper">
+
+                      <input
+                          type="number"
+                          id="pathCount"
+                          class="form-control"
+                          value="6"
+                          min="1"
+                          max="45">
+
+                      <div id="pathCountButton" class="path-count-arrow">
+                          <i class="bi bi-caret-down-fill"></i>
+                      </div>
+
+                      <div id="pathCountMenu" class="path-count-menu">
+                      </div>
+
+                  </div>
+
+                  <span>paths</span>
+
+                </div>
+
+            </div>
 
             </div>
           </div>
@@ -124,6 +154,58 @@
     </div>
 
     <script>
+        const input = document.getElementById("pathCount");
+        const menu = document.getElementById("pathCountMenu");
+        const button = document.getElementById("pathCountButton");
+
+        for (let i = 1; i <= 45; i++) {
+            const item = document.createElement("div");
+            item.className = "path-count-item";
+            item.textContent = i;
+            item.onclick = function() {
+                input.value = i;
+                menu.classList.remove("show");
+            };
+            menu.appendChild(item);
+        }
+
+        button.onclick = function() {
+            const current = parseInt(input.value);
+            menu.querySelectorAll(".path-count-item").forEach(item => {
+
+                item.style.background = "";
+                if (Number(item.textContent) === current) {
+
+                    item.style.background = "#cfe2ff";
+
+                    item.scrollIntoView({
+                        block: "nearest"
+                    });
+                }
+            });
+
+            menu.classList.toggle("show");
+        };
+
+        document.addEventListener("click", function(e) {
+
+          if (!e.target.closest(".path-count-container")) {
+              menu.classList.remove("show");
+          }
+
+        });
+
+        input.addEventListener("input", function() {
+            let n = parseInt(input.value);
+
+            if (isNaN(n))
+              return;
+
+            n = Math.max(1, Math.min(45,n));
+            input.value = n;
+
+        });
+        
         function swap() {
             const start = document.getElementById("startArticle");
             const end = document.getElementById("endArticle");
@@ -135,6 +217,16 @@
             const start = document.getElementById("startArticle").value;
             const end = document.getElementById("endArticle").value;
 
+            let n = parseInt(document.getElementById("pathCount").value);
+
+            if (isNaN(n)) {
+                n = 6;
+            }
+
+            n = Math.max(1, Math.min(n, 45));
+
+            document.getElementById("pathCount").value = n;
+
             const response = await fetch("/search", {
                 method: "POST",
                 headers: {
@@ -142,7 +234,8 @@
                 },
                 body: JSON.stringify({
                     start: start,
-                    end: end
+                    end: end,
+                    n: n
                 })
             });
 

@@ -40,3 +40,65 @@ body {
 .swap:hover i {
     color: var(--bs-primary);
 }
+
+.path-count-container{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.path-count-wrapper{
+    position: relative;
+    display: inline-block;
+}
+
+.path-count-wrapper input{
+    width: 90px;
+    padding-right: 28px;
+}
+
+.path-count-arrow{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.path-count-arrow:hover{
+    color: black;
+}
+
+.path-count-menu{
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    width: 90px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ced4da;
+    border-radius: .375rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    z-index: 2000;
+}
+
+.path-count-menu.show{
+    display: block;
+}
+
+.path-count-item{
+    padding: 7px 12px;
+    cursor: pointer;
+}
+
+.path-count-item:hover{
+    background: #e9ecef;
+}

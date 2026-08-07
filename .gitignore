@@ -2,3 +2,5 @@ data/
 *.bin
 
 autocomplete.py
+
+__pycache__/*
