@@ -102,3 +102,26 @@ body {
 .path-count-item:hover{
     background: #e9ecef;
 }
+
+.path-item {
+  position: relative;
+  padding-left: 24px !important;
+}
+
+.path-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background-color: var(--path-color);
+}
+
+.path-item:first-child::before {
+  border-radius: 5px 0 0 0;
+}
+
+.path-item:last-child::before {
+  border-radius: 0 0 0 5px;
+}

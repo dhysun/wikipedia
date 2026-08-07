@@ -284,14 +284,21 @@
                     const list = document.createElement("div");
                     list.className = "list-group";
 
-                    path.forEach(function (title) {
+                    path.forEach(function (title, titleIndex) {
                         const item = document.createElement("a");
-                        item.className = "list-group-item list-group-item-action";
+                        item.className = "list-group-item list-group-item-action path-item";
                         item.href = "https://en.wikipedia.org/wiki/" +
                             encodeURIComponent(title.replace(/ /g, "_"));
+
                         item.target = "_blank";
                         item.rel = "noopener";
                         item.textContent = title;
+
+                        const progress = path.length <= 1 ? 0 : titleIndex / (path.length - 1);
+                        const lightness = 96 - (25 * progress);
+
+                        item.style.setProperty("--path-color", `hsl(205, 70%, ${lightness}%)`);
+
                         list.appendChild(item);
                     });
                     
