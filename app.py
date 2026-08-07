@@ -20,12 +20,13 @@ def search():
     start_time = time.perf_counter()
 
     data = request.get_json()
-    start = (data["start"]).replace(" ","_")
-    end = (data["end"]).replace(" ","_")
+    start = (data["start"]).replace(" ", "_")
+    end = (data["end"]).replace(" ", "_")
 
-    path = wiki.BiBFS(start,end)
-    for node in path:
-        node = node.replace("_"," ")
+    path = wiki.BiBFS(start, end)
+
+    if path is not None:
+        path = [node.replace("_", " ") for node in path]
 
     elapsed_time = (time.perf_counter() - start_time) * 1000
 

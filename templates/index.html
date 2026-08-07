@@ -3,112 +3,124 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel = "icon" type="image/png" href = "Wikipedia_Favicon.png">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Wikipedia_Favicon.png') }}">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
 
-  <header class="site_header">
-    <div class="header_spacer"></div>
-    <img src="{{ url_for('static', filename='site-logo.png') }}"
-         alt="Wikipedia Pathfinder Logo"
-         class="logo">
-    <nav class="header_links">
-        <a href="#" class="link" id="aboutLink">About</a>
-        <a href="#" class="link">Github</a>
-    </nav>
-  </header>
-
   <body>
+
+    <nav class="navbar py-3">
+      <div class="container-fluid d-flex align-items-start flex-nowrap px-4">
+        <div class="flex-fill"></div>
+
+        <a class="navbar-brand mx-auto p-0" href="#">
+          <img src="{{ url_for('static', filename='site-logo.png') }}"
+               alt="Wikipedia Pathfinder Logo"
+               class="logo img-fluid">
+        </a>
+
+        <div class="flex-fill d-flex justify-content-end align-items-center gap-4 pt-1">
+          <a href="#" class="link fs-5" id="aboutLink" data-bs-toggle="modal" data-bs-target="#aboutModal">About</a>
+          <a href="#" class="link fs-5" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </nav>
+
     <div class="container mt-5">
+      <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-body article-container">
 
-    <div class="row">
+              <div class="article-row d-flex justify-content-center align-items-center gap-3 p-3">
 
-        <div class="col-md-5">
-            <div class="card">
-                <div class="card-body">
+                <div class="input-group position-relative article-input-group">
+                  <input
+                      type="text"
+                      class="form-control"
+                      id="startArticle"
+                      name="startArticle"
+                      autocomplete="off"
+                      placeholder="Start Article">
 
-                    <div>
+                  <button type="button" class="btn btn-outline-secondary">
+                    <i class="bi bi-shuffle fs-5"></i>
+                  </button>
 
-                        <div class="inputs">
-
-                            <div class="input_group">
-                                <input
-                                    type="text"
-                                    class="article_input"
-                                    id="startArticle"
-                                    name="startArticle"
-                                    autocomplete="off"
-                                    placeholder="Start Article">
-
-                                <button type="button" class="shuffle">
-                                    <img src="{{ url_for('static', filename='shuffle.png') }}">
-                                </button>
-
-                                <div id="startSuggestions"
-                                    class="list-group position-absolute w-100"
-                                    style="z-index:1000;">
-                                </div>
-                            </div>
-
-                            <button type="button" class="swap" onclick="swap()">
-                                <img src="{{ url_for('static', filename='swap.png') }}">
-                            </button>
-
-                            <div class="input_group">
-                                <input
-                                    type="text"
-                                    class="article_input"
-                                    id="endArticle"
-                                    name="endArticle"
-                                    autocomplete="off"
-                                    placeholder="End Article">
-
-                                <button type="button" class="shuffle">
-                                    <img src="{{ url_for('static', filename='shuffle.png') }}">
-                                </button>
-
-                                <div id="endSuggestions"
-                                    class="list-group position-absolute w-100"
-                                    style="z-index:1000;">
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="inputs">
-                            <button type="button" class="Search" onclick="findPath()">
-                                <b>Search</b>
-                            </button>
-                        </div>
-
-                    </div>
-
+                  <div id="startSuggestions"
+                       class="list-group position-absolute"
+                       style="z-index:1000; top:100%; left:0;">
+                  </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-7">
-            <div class="card">
-                <div class="card-body">
+                <button type="button" class="btn btn-link swap p-0 border-0 text-dark" onclick="swap()">
+                  <i class="bi bi-arrow-left-right"></i>
+                </button>
 
-                    <h4 class="card-title mb-3">Results</h4>
+                <div class="input-group position-relative article-input-group">
+                  <input
+                      type="text"
+                      class="form-control"
+                      id="endArticle"
+                      name="endArticle"
+                      autocomplete="off"
+                      placeholder="End Article">
 
-                    <div id="results">
-                        Output will appear here.
-                    </div>
+                  <button type="button" class="btn btn-outline-secondary">
+                    <i class="bi bi-shuffle fs-5"></i>
+                  </button>
 
+                  <div id="endSuggestions"
+                       class="list-group position-absolute"
+                       style="z-index:1000; top:100%; left:0;">
+                  </div>
                 </div>
-            </div>
-        </div>
 
+              </div>
+
+              <div class="d-flex justify-content-center p-3">
+                <button type="button" class="btn btn-primary px-5 py-2 fw-bold" onclick="findPath()">
+                  Search
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-3">Results</h4>
+              <div id="results">
+                Output will appear here.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    </div>
-
-    <div id="aboutModal" class="modal">
-        <div class="about_content">
-            <p2>placeholder</p2>
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+      <div class="modal-dialog mt-5" style="max-width:450px;">
+        <div class="modal-content" style="max-height:80vh; overflow-y:auto;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="aboutModalLabel">About</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>placeholder</p>
+          </div>
         </div>
+      </div>
     </div>
 
     <script>
@@ -118,28 +130,6 @@
 
             [start.value, end.value] = [end.value, start.value];
         }
-
-        const aboutLink = document.getElementById('aboutLink');
-        const aboutModal = document.getElementById('aboutModal');
-
-        function openAboutModal() {
-            aboutModal.style.display = 'flex';
-        }
-
-        function closeAboutModal() {
-            aboutModal.style.display = 'none';
-        }
-
-        aboutLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            openAboutModal();
-        });
-
-        aboutModal.addEventListener('click', (e) => {
-            if (e.target === aboutModal) {
-                closeAboutModal();
-            }
-        });
 
         async function findPath() {
             const start = document.getElementById("startArticle").value;
@@ -158,16 +148,34 @@
 
             const data = await response.json();
 
-            let html = "";
+            const results = document.getElementById("results");
+            results.innerHTML = "";
 
-            // data.paths should be an array of strings
-            for (let i = 0; i < Math.min(data.paths.length, 6); i++) {
-                html += data.paths[i] + "<br><br>";
+            if (data.path) {
+                const list = document.createElement("div");
+                list.className = "list-group mb-3";
+
+                data.path.forEach(function (title) {
+                    const item = document.createElement("a");
+                    item.className = "list-group-item list-group-item-action";
+                    item.href = "https://en.wikipedia.org/wiki/" + encodeURIComponent(title.replace(/ /g, "_"));
+                    item.target = "_blank";
+                    item.rel = "noopener";
+                    item.textContent = title;
+                    list.appendChild(item);
+                });
+
+                results.appendChild(list);
+            } else {
+                const notFound = document.createElement("p");
+                notFound.textContent = "No path found.";
+                results.appendChild(notFound);
             }
 
-            html += "Time taken: " + data.time_str;
-
-            document.getElementById("results").innerHTML = html;
+            const timeLine = document.createElement("p");
+            timeLine.className = "text-muted mb-0";
+            timeLine.textContent = "Time taken: " + data.time_str;
+            results.appendChild(timeLine);
         }
 
         function setupAutocomplete(inputId, suggestionId) {
@@ -179,8 +187,11 @@
 
                 const text = input.value.trim();
 
+                suggestions.style.width = input.offsetWidth + "px";
+
                 if (text === "") {
                     suggestions.innerHTML = "";
+                    suggestions.classList.remove("border", "rounded-bottom", "bg-white", "shadow-sm");
                     return;
                 }
 
@@ -189,6 +200,13 @@
                     .then(results => {
 
                         suggestions.innerHTML = "";
+
+                        if (results.length === 0) {
+                            suggestions.classList.remove("border", "rounded-bottom", "bg-white", "shadow-sm");
+                            return;
+                        }
+
+                        suggestions.classList.add("border", "rounded-bottom", "bg-white", "shadow-sm");
 
                         results.forEach(function(title) {
 
@@ -201,6 +219,7 @@
                             item.onclick = function() {
                                 input.value = title;
                                 suggestions.innerHTML = "";
+                                suggestions.classList.remove("border", "rounded-bottom", "bg-white", "shadow-sm");
                             };
 
                             suggestions.appendChild(item);
