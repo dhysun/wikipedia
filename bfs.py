@@ -5,6 +5,7 @@ import pickle
 import random
 import heapq
 import numpy as np
+import time
 
 class WikiSearch:
 
@@ -51,11 +52,17 @@ class WikiSearch:
         with open("data/is_redirect_array.bin", "rb") as f:
             self.is_redirect_array = pickle.load(f)
 
+        self.TIMEOUT = object()
+
     def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict,
-               neighbors, offsets, forbidden_edges, forbidden_nodes, reversed: bool):
+               neighbors, offsets, forbidden_edges, forbidden_nodes, reversed: bool, deadline = None):
 
         level_size = len(queue)
         for _ in range(level_size):
+
+            if deadline is not None and time.monotonic() >= deadline:
+                return self.TIMEOUT
+            
             current = queue.popleft()
             start = offsets[current]
             end = offsets[current+1]
@@ -81,7 +88,7 @@ class WikiSearch:
                     queue.append(neighbor)
         return None
 
-    def BiBFS(self, start: int, end: int, forbidden_edges: set, forbidden_nodes: set):
+    def BiBFS(self, start: int, end: int, forbidden_edges: set, forbidden_nodes: set, deadline = None):
 
         meeting = None
         forward_queue = deque([start])
@@ -94,16 +101,25 @@ class WikiSearch:
         backward_visited = {end}
 
         while forward_queue and backward_queue:
+            
             if len(forward_queue) <= len(backward_queue):
                 meeting = self.extend(forward_queue, forward_path, forward_visited, backward_visited,
                                       self.forward_neighbors, self.forward_offsets, forbidden_edges,
-                                      forbidden_nodes, False)
+                                      forbidden_nodes, False, deadline)
+                
+                if meeting is self.TIMEOUT:
+                    return self.TIMEOUT
+                
                 if meeting is not None:
                     break
             else:
                 meeting = self.extend(backward_queue, backward_path, backward_visited, forward_visited,
                                       self.reverse_neighbors, self.reverse_offsets, forbidden_edges,
-                                      forbidden_nodes, True)
+                                      forbidden_nodes, True, deadline)
+                
+                if meeting is self.TIMEOUT:
+                    return self.TIMEOUT
+                
                 if meeting is not None:
                     break
 
@@ -127,24 +143,30 @@ class WikiSearch:
 
         return None
 
-    def k_shortest_paths(self, start_title: str, end_title: str, num_paths = 6):
+    def k_shortest_paths(self, start_title: str, end_title: str, num_paths = 6, timeout = None):
 
+        timeout_flag = False
         confirmed_paths = []
         candidate_paths = []
         candidate_set = set()
 
+        if timeout is not None:
+            deadline = timeout + time.monotonic()
+        else:
+            deadline = None
+
         if start_title in self.title_to_node:
             start = self.title_to_node[start_title]
         else:
-            return None
+            return None, False
         
         if end_title in self.title_to_node:
             end = self.title_to_node[end_title]
         else:
-            return None
+            return None, False
 
         if(start is None or end is None):
-            return None
+            return None, False
         
         if(start == end):
             return [start]
@@ -155,13 +177,22 @@ class WikiSearch:
         if(self.is_redirect_array[end] == 1):
             end = self.reverse_neighbors[self.offsets[end]]
 
-        first = self.BiBFS(start,end,set(),set())
+        first = self.BiBFS(start,end,set(),set(), deadline)
+
+        if first is self.TIMEOUT: #extremely rare
+            return [], True
+        
         if first is None: 
-            return [] #Due to the existence of orphaned articles
+            return [], False #Due to the existence of orphaned articles
         else:
             confirmed_paths.append(first)
 
         for i in range(1,num_paths):
+
+            if deadline is not None and time.monotonic() >= deadline:
+                timeout_flag = True
+                break
+
             for node in range(len(confirmed_paths[-1])-1):
                 spur_node = confirmed_paths[-1][node]
                 root_path = confirmed_paths[-1][:node + 1]
@@ -176,7 +207,11 @@ class WikiSearch:
                 for root_node in root_path[:-1]:
                     forbidden_nodes.add(root_node)
 
-                spur_path = self.BiBFS(spur_node, end, forbidden_edges, forbidden_nodes)
+                spur_path = self.BiBFS(spur_node, end, forbidden_edges, forbidden_nodes, deadline)
+
+                if spur_path is self.TIMEOUT:
+                    timeout_flag = True
+                    break
 
                 if spur_path is None:
                     continue
@@ -187,9 +222,13 @@ class WikiSearch:
                     candidate_set.add(tuple_tpath)
                     heapq.heappush(candidate_paths,(len(total_path),tuple_tpath))
 
+            if timeout_flag: #to avoid an incomplete canditate_paths
+                break
+
             if candidate_paths:
                 _, new_path = heapq.heappop(candidate_paths)
                 confirmed_paths.append(list(new_path))
+
             else:
                 break
 
@@ -197,7 +236,8 @@ class WikiSearch:
         for path in confirmed_paths:
             title_paths.append([self.titles[node] for node in path])
 
-        return title_paths
+
+        return title_paths, timeout_flag
 
     def canonical_node(self, node):
         if self.is_redirect_array[node] == 1:
