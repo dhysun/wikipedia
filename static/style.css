@@ -26,7 +26,7 @@ body {
 .article-row {
   flex-direction: column;
 }
- 
+
 @container (min-width: 680px) {
   .article-row {
     flex-direction: row;
