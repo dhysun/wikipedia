@@ -24,7 +24,7 @@ def search():
     end = (data["end"]).replace(" ", "_")
 
     n = int(data.get("n", 6))
-    n = max(1, min(n, 45))
+    n = max(1, min(n, 99))
 
     path = wiki.k_shortest_paths(start, end, n)
 
@@ -65,5 +65,5 @@ def random_article():
     return jsonify({"title": wiki.random_title()})
 
 if __name__ == "__main__":
-    print(app.url_map)
-    app.run(debug=True,use_reloader = False)
+    # print(app.url_map)
+    app.run(debug = True, use_reloader = False)
