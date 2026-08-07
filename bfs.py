@@ -3,7 +3,7 @@ from array import array
 import bisect #for prefix search
 import pickle
 import random
-import time
+import heapq
 
 class WikiSearch:
 
@@ -44,7 +44,7 @@ class WikiSearch:
             self.is_redirect_array = pickle.load(f)
 
     def extend(self, queue: list, path: dict, visited: dict, reversevisited: dict,
-               neighbors, offsets):
+               neighbors, offsets, forbidden_edges, forbidden_nodes, reversed: bool):
 
         level_size = len(queue)
         for _ in range(level_size):
@@ -54,6 +54,17 @@ class WikiSearch:
             
             for i in range(start,end):
                 neighbor = neighbors[i]
+
+                if not reversed:
+                    if (current, neighbor) in forbidden_edges:
+                        continue
+                else:
+                    if(neighbor,current) in forbidden_edges:
+                        continue
+
+                if neighbor in forbidden_nodes:
+                    continue
+
                 if neighbor not in visited:
                     path[neighbor] = current
                     visited.add(neighbor)
@@ -62,30 +73,7 @@ class WikiSearch:
                     queue.append(neighbor)
         return None
 
-    def BiBFS(self, start_title: str, end_title: str):
-
-        if start_title in self.title_to_node:
-            start = self.title_to_node[start_title]
-        else:
-            return None
-        
-        if end_title in self.title_to_node:
-            end = self.title_to_node[end_title]
-        else:
-            return None
-
-        if(start is None or end is None):
-            return None
-
-        if self.is_redirect_array[start] == 1:
-            start = self.forward_neighbors[self.forward_offsets[start]]
-
-        if self.is_redirect_array[end] == 1:
-            end = self.reverse_neighbors[self.reverse_offsets[end]]
-        
-        if(start == end):
-            return [start]
-        
+    def BiBFS(self, start: int, end: int, forbidden_edges: set, forbidden_nodes: set):
 
         meeting = None
         forward_queue = deque([start])
@@ -100,12 +88,14 @@ class WikiSearch:
         while forward_queue and backward_queue:
             if len(forward_queue) <= len(backward_queue):
                 meeting = self.extend(forward_queue, forward_path, forward_visited, backward_visited,
-                                      self.forward_neighbors, self.forward_offsets)
+                                      self.forward_neighbors, self.forward_offsets, forbidden_edges,
+                                      forbidden_nodes, False)
                 if meeting is not None:
                     break
             else:
                 meeting = self.extend(backward_queue, backward_path, backward_visited, forward_visited,
-                                      self.reverse_neighbors, self.reverse_offsets)
+                                      self.reverse_neighbors, self.reverse_offsets, forbidden_edges,
+                                      forbidden_nodes, True)
                 if meeting is not None:
                     break
 
@@ -124,11 +114,82 @@ class WikiSearch:
                 tmp = backward_path[tmp]
 
             node_path = left_half + right_half
-            page_path = [self.titles[node] for node in node_path]
 
-            return page_path
+            return node_path
 
         return None
+
+    def k_shortest_paths(self, start_title: str, end_title: str, num_paths = 6):
+
+        confirmed_paths = []
+        candidate_paths = []
+        candidate_set = set()
+
+        if start_title in self.title_to_node:
+            start = self.title_to_node[start_title]
+        else:
+            return None
+        
+        if end_title in self.title_to_node:
+            end = self.title_to_node[end_title]
+        else:
+            return None
+
+        if(start is None or end is None):
+            return None
+        
+        if(start == end):
+            return [start]
+
+        if(self.is_redirect_array[start] == 1):
+            start = self.forward_neighbors[self.offsets[start]]
+
+        if(self.is_redirect_array[end] == 1):
+            end = self.reverse_neighbors[self.offsets[end]]
+
+        first = self.BiBFS(start,end,set(),set())
+        if first is None: 
+            return [] #Due to the existence of orphaned articles
+        else:
+            confirmed_paths.append(first)
+
+        for i in range(1,num_paths):
+            for node in range(len(confirmed_paths[-1])-1):
+                spur_node = confirmed_paths[-1][node]
+                root_path = confirmed_paths[-1][:node + 1]
+                forbidden_edges = set()
+                forbidden_nodes = set()
+
+
+                for path in confirmed_paths:
+                    if (path[:node + 1] == root_path) and (len(path) > node + 1):
+                        forbidden_edges.add((path[node],path[node + 1]))
+
+                for root_node in root_path[:-1]:
+                    forbidden_nodes.add(root_node)
+
+                spur_path = self.BiBFS(spur_node, end, forbidden_edges, forbidden_nodes)
+
+                if spur_path is None:
+                    continue
+
+                total_path = root_path[:-1] + spur_path
+                tuple_tpath = tuple(total_path)
+                if tuple_tpath not in candidate_set:
+                    candidate_set.add(tuple_tpath)
+                    heapq.heappush(candidate_paths,(len(total_path),tuple_tpath))
+
+            if candidate_paths:
+                _, new_path = heapq.heappop(candidate_paths)
+                confirmed_paths.append(list(new_path))
+            else:
+                break
+
+        title_paths = []
+        for path in confirmed_paths:
+            title_paths.append([self.titles[node] for node in path])
+
+        return title_paths
 
     def prefix_search(self, prefix, max_candidates=250000, limit=5):
         # start = time.perf_counter()
