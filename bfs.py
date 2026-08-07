@@ -4,30 +4,38 @@ import bisect #for prefix search
 import pickle
 import random
 import heapq
+import numpy as np
 
 class WikiSearch:
 
-    #loads in csr
     def __init__(self):
-        num_nodes = 19101118
-        num_edges = 717960658
 
-        self.forward_offsets = array('I')
-        with open("data/forward_offsets.bin", "rb") as f:
-            self.forward_offsets.fromfile(f, num_nodes + 1)
+        #loads in csr, num_nodes = 19101118, num_edges = 717960658
+        self.forward_offsets = np.memmap(
+            "data/forward_offsets.bin",
+            dtype = np.uint32,
+            mode="r"
+        )
 
-        self.forward_neighbors = array('I')
-        with open("data/forward_neighbors.bin", "rb") as f:
-            self.forward_neighbors.fromfile(f, num_edges)
+        self.reverse_offsets = np.memmap(
+            "data/reverse_offsets.bin",
+            dtype = np.uint32,
+            mode="r"
+        )
 
-        self.reverse_offsets = array('I')
-        with open("data/reverse_offsets.bin", "rb") as f:
-            self.reverse_offsets.fromfile(f, num_nodes + 1)
+        self.forward_neighbors = np.memmap(
+            "data/forward_neighbors.bin",
+            dtype = np.uint32,
+            mode="r"
+        )
 
-        self.reverse_neighbors = array('I')
-        with open("data/reverse_neighbors.bin", "rb") as f:
-            self.reverse_neighbors.fromfile(f, num_edges)
+        self.reverse_neighbors = np.memmap(
+            "data/reverse_neighbors.bin",
+            dtype = np.uint32,
+            mode="r"
+        )
 
+        #loads in titles and autocomplete
         with open("data/title_to_node.bin", "rb") as f:
             self.title_to_node = pickle.load(f)
 
