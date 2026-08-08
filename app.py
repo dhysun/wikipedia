@@ -1,7 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, jsonify
 from bfs import WikiSearch
-from flask import jsonify
 
 import time
 

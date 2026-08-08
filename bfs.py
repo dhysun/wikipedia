@@ -1,5 +1,4 @@
 from collections import deque
-from array import array
 import bisect #for prefix search
 import pickle
 import random
