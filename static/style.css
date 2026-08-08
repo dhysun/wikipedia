@@ -15,6 +15,10 @@ body {
     pointer-events: none;
 }
 
+.nav-link:hover {
+    color: black;
+}
+
 .navbar-toggler {
   position: relative;
   z-index: 2;
