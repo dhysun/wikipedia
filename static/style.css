@@ -1,9 +1,43 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
- 
+
+.navbar {
+    position: relative;
+}
+
+.navbar-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.navbar-toggler {
+  position: relative;
+  z-index: 2;
+}
+
+.search-controls {
+    width: 100%;
+}
+
+.search-controls .btn-primary {
+    min-width: 206px;
+}
+
 .logo {
   width: 400px;
+  max-width: calc(100vw - 100px);
+}
+
+@media (max-width: 576px) {
+  .logo {
+    width: 260px;
+    max-width: calc(100vw - 160px);
+  }
 }
  
 .link {
