@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Finds the shortest linked paths between Wikipedia articles!">
+    
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='Wikipedia_Favicon.png') }}">
 
     <!-- Bootstrap -->
@@ -48,7 +50,7 @@
                       About
                   </a>
 
-                  <a href="#"
+                  <a href="https://github.com/dhysun/wikipedia"
                     class="nav-link"
                     target="_blank"
                     rel="noopener">
@@ -175,7 +177,17 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <p>placeholder</p>
+            <p>
+              Wikipedia Pathfinder utilizes a bidirectional 
+              Breadth-First-Search to find the shortest possible path between
+              any two Wikipedia articles. Simply enter the starting and target
+              article, and click search! The website is up to date as of June 
+              1, 2026. Finally, feel free to check out our GitHub! It contains
+              more in-depth details on how the website was built. <br> <br>
+
+              Credits to the Wikipedia Speedrunning Community and Six Degrees 
+              of Wikipedia for inspiring this project!
+            </p>
           </div>
         </div>
       </div>
