@@ -6,50 +6,53 @@ import random
 import heapq
 import numpy as np
 import time
+from pathlib import Path
 
 class WikiSearch:
 
     def __init__(self):
 
+        DATA_DIR = Path(__file__).resolve().parent / "data"
+
         #loads in csr, num_nodes = 19101118, num_edges = 717960658
         self.forward_offsets = np.memmap(
-            "data/forward_offsets.bin",
+            DATA_DIR / "forward_offsets.bin",
             dtype = np.uint32,
             mode="r"
         )
 
         self.reverse_offsets = np.memmap(
-            "data/reverse_offsets.bin",
+            DATA_DIR / "reverse_offsets.bin",
             dtype = np.uint32,
             mode="r"
         )
 
         self.forward_neighbors = np.memmap(
-            "data/forward_neighbors.bin",
+            DATA_DIR / "forward_neighbors.bin",
             dtype = np.uint32,
             mode="r"
         )
 
         self.reverse_neighbors = np.memmap(
-            "data/reverse_neighbors.bin",
+            DATA_DIR / "reverse_neighbors.bin",
             dtype = np.uint32,
             mode="r"
         )
 
         #loads in titles and autocomplete
-        with open("data/title_to_node.bin", "rb") as f:
+        with open(DATA_DIR / "title_to_node.bin", "rb") as f:
             self.title_to_node = pickle.load(f)
 
-        with open("data/titles.bin", "rb") as f:
+        with open(DATA_DIR / "titles.bin", "rb") as f:
             self.titles = pickle.load(f)
 
-        with open("data/autocomplete.bin", "rb") as f:
+        with open(DATA_DIR / "autocomplete.bin", "rb") as f:
             self.autocomplete = pickle.load(f)
 
-        with open("data/sorted_title_strings.bin", "rb") as f:
+        with open(DATA_DIR / "sorted_title_strings.bin", "rb") as f:
             self.sorted_title_strings = pickle.load(f)
         
-        with open("data/is_redirect_array.bin", "rb") as f:
+        with open(DATA_DIR / "is_redirect_array.bin", "rb") as f:
             self.is_redirect_array = pickle.load(f)
 
         self.TIMEOUT = object()
