@@ -1,0 +1,165 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.navbar {
+    position: relative;
+}
+
+.navbar-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.nav-link:hover {
+    color: black;
+}
+
+.navbar-toggler {
+  position: relative;
+  z-index: 2;
+}
+
+.search-controls {
+    width: 100%;
+}
+
+.search-controls .btn-primary {
+    min-width: 206px;
+}
+
+.logo {
+  width: 400px;
+  max-width: calc(100vw - 100px);
+}
+
+@media (max-width: 576px) {
+  .logo {
+    width: 260px;
+    max-width: calc(100vw - 160px);
+  }
+}
+ 
+.link {
+  text-decoration: none;
+  color: black;
+}
+ 
+.link:hover {
+  color: var(--bs-primary);
+}
+ 
+.article-input-group {
+  max-width: 300px;
+}
+
+.article-container {
+  container-type: inline-size;
+}
+ 
+.article-row {
+  flex-direction: column;
+}
+
+@container (min-width: 680px) {
+  .article-row {
+    flex-direction: row;
+  }
+}
+
+.swap i {
+    transition: color 0.15s;
+}
+
+.swap:hover i {
+    color: var(--bs-primary);
+}
+
+.path-count-container{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.path-count-wrapper{
+    position: relative;
+    display: inline-block;
+}
+
+.path-count-wrapper input{
+    width: 90px;
+    padding-right: 28px;
+}
+
+.path-count-arrow{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.path-count-arrow:hover{
+    color: black;
+}
+
+.path-count-menu{
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    width: 90px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ced4da;
+    border-radius: .375rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    z-index: 2000;
+}
+
+.path-count-menu.show{
+    display: block;
+}
+
+.path-count-item{
+    padding: 7px 12px;
+    cursor: pointer;
+}
+
+.path-count-item:hover{
+    background: #e9ecef;
+}
+
+.path-item {
+  position: relative;
+  padding-left: 24px !important;
+}
+
+.path-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background-color: var(--path-color);
+}
+
+.path-item:first-child::before {
+  border-radius: 5px 0 0 0;
+}
+
+.path-item:last-child::before {
+  border-radius: 0 0 0 5px;
+}

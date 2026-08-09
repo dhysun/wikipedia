@@ -44,8 +44,8 @@ Wiki-Pathfinder utilizes .bin files to ultimately store the data. As page IDs ar
 ### Title Search and Autocomplete
   1. 'title_to_node' - a dictionary that maps each node to its title
   2. 'titles' - a 1D array of titles whose indexes correspond to nodes
-  3. 'sorted_title_strings' -
-  4. 'autocomplete' - 
+  3. 'sorted_title_strings' - a 1D arrays of alphabetically sorted titles in lowercase
+  4. 'autocomplete' - a 1D array of (node, incoming links) pairs sorted alphabetically by title
   5. 'is_redirect_array' - a 1D array whose indexes correspond to nodes '1: redirect, 0: non-redirect'
 
 # Loading the Data
