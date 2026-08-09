@@ -23,8 +23,10 @@ BiBFS() is a standard bidirectional BFS that maintains a separate visited list a
 A helper function for BiBFS, extend(), moves the specified frontier forward by a level and checks for nodes shared between both frontiers' visited sets. extend() additionally enforces forbidden edge and node checks.
 
 ## canonical_node()
+A helper function for prefix_search(). If the input node corresponds with a title A that is a redirect to another page with title B, then it returns the node which corresponds to title B. Otherwise, it returns the input node.
 
 ## prefix_search()
+prefix_search() takes in prefix, max_candidates, and limit. limit is the size of the array of autocomplete results, which we set to 5. max_candidates is the maximum number of titles we select from for the autocomplete result, which we set to 250,000. prefix is the input string. First, we determine the indexes of the first and last elements in sorted_title_strings which has the inputted prefix and take the min of that and max_candidates. Then, sort the sublist between these two indexes by the number of incoming links they have. Last, we generate the returned list of autocomplete results based on the number of incoming links they have, appending the prefix to the start and checking that none of the autocomplete results have the same canonical node.
 
 ## random_title()
 A simple random title generator that generates a CSR node converted into a title. random_title() then checks if the randomly generated title is a redirect, in which case it returns its parent node.
