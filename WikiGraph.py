@@ -112,7 +112,7 @@ class WikiSearch:
 
         while forward_queue and backward_queue:
 
-            #alternates exploring the frontier with a shorter queue
+            #alternates exploring the frontier with the shorter queue
             if len(forward_queue) <= len(backward_queue):
                 meeting = self.extend(forward_queue, forward_path, forward_visited, backward_visited,
                                       self.forward_neighbors, self.forward_offsets, forbidden_edges,
@@ -238,7 +238,8 @@ class WikiSearch:
                 #combines root path (nodes before spur node) with spur path
                 total_path = root_path[:-1] + spur_path
                 tuple_tpath = tuple(total_path)
-                
+
+                #checks for duplicate paths that may have been refound
                 if tuple_tpath not in candidate_set:
                     candidate_set.add(tuple_tpath)
                     heapq.heappush(candidate_paths,(len(total_path),tuple_tpath))
@@ -255,6 +256,7 @@ class WikiSearch:
                 break
 
         title_paths = []
+        
         #title_paths is an array of CSR nodes, convert back to titles
         for path in confirmed_paths:
             title_paths.append([self.titles[node] for node in path])
