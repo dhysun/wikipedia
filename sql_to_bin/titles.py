@@ -25,8 +25,6 @@ for page_id, title in cur:
     title = title.decode("utf-8")
     titles.append(title)
 
-print(f"Node count: {len(titles):,}")
-
 # Creates a dictionary mapping titles to nodes
 title_to_node = {t: i for i, t in enumerate(titles)}
 
