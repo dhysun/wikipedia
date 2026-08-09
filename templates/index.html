@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Finds the shortest linked paths between Wikipedia articles!">
     
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='Wikipedia_Favicon.png') }}">
 
     <!-- Bootstrap -->
@@ -12,25 +13,28 @@
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <!-- Montserrat Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-
+    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
 
   <body>
-
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg py-3">
       <div class="container-fluid px-4">
 
+          <!-- Site Logo -->
           <a class="navbar-logo p-0" href="#">
               <img src="{{ url_for('static', filename='site-logo.png') }}"
                   alt="Wikipedia Pathfinder Logo"
                   class="logo img-fluid">
           </a>
 
+          <!-- Hamburger menu for smaller screens -->
           <button class="navbar-toggler ms-auto"
                   type="button"
                   data-bs-toggle="collapse"
@@ -41,15 +45,17 @@
               <span class="navbar-toggler-icon"></span>
           </button>
 
+          <!-- Navbar links -->
           <div class="collapse navbar-collapse" id="navbarContent">
               <div class="navbar-nav ms-auto">
+                  <!-- About Modal -->
                   <a href="#"
                     class="nav-link"
                     data-bs-toggle="modal"
                     data-bs-target="#aboutModal">
                       About
                   </a>
-
+                  <!-- GitHub Link -->
                   <a href="https://github.com/dhysun/wikipedia"
                     class="nav-link"
                     target="_blank"
@@ -62,15 +68,18 @@
       </div>
     </nav>
 
+    <!-- Container for search inputs -->
     <div class="container mt-5">
+      
       <div class="row justify-content-center mb-4">
         <div class="col-lg-8">
           <div class="card">
             <div class="card-body article-container">
-
+              
               <div class="article-row d-flex justify-content-center align-items-center gap-3 p-3">
-
+                <!-- Start Article Input -->
                 <div class="input-group position-relative article-input-group">
+                  <!-- Text field -->
                   <input
                       type="text"
                       class="form-control"
@@ -79,21 +88,26 @@
                       autocomplete="off"
                       placeholder="Start Article">
 
+                  <!-- Button to get random start article -->
                   <button type="button" class="btn btn-outline-secondary" onclick="getRandomStart()">
                     <i class="bi bi-shuffle fs-5"></i>
                   </button>
 
+                  <!-- Autocomplete Suggestions List -->
                   <div id="startSuggestions"
                        class="list-group position-absolute"
-                       style="z-index:1000; top:100%; left:0;">
+                       style="z-index: 1000; top: 100%; left: 0;">
                   </div>
                 </div>
 
+                <!-- Button to swap start and end articles -->
                 <button type="button" class="btn btn-link swap p-0 border-0 text-dark" onclick="swap()">
                   <i class="bi bi-arrow-left-right"></i>
                 </button>
 
+                <!-- End Article Input -->
                 <div class="input-group position-relative article-input-group">
+                  <!-- Text field -->
                   <input
                       type="text"
                       class="form-control"
@@ -102,20 +116,21 @@
                       autocomplete="off"
                       placeholder="End Article">
 
+                  <!-- Button to get random end article -->
                   <button type="button" class="btn btn-outline-secondary" onclick="getRandomEnd()">
                     <i class="bi bi-shuffle fs-5"></i>
                   </button>
 
+                  <!-- Autocomplete Suggestions List -->
                   <div id="endSuggestions"
                        class="list-group position-absolute"
-                       style="z-index:1000; top:100%; left:0;">
+                       style="z-index: 1000; top: 100%; left: 0;">
                   </div>
                 </div>
-
               </div>
 
               <div class="search-box d-flex justify-content-center align-items-end gap-3 mt-3">
-
+                <!-- Search Button -->
                 <button
                     type="button"
                     class="btn btn-primary px-5 py-2 fw-bold"
@@ -124,37 +139,36 @@
                 </button>
 
                 <div class="path-count-container">
-
                   <div class="path-count-wrapper">
+                    <!-- Path Count Text Field -->
+                    <input
+                        type="number"
+                        id="pathCount"
+                        class="form-control"
+                        value="6"
+                        min="1"
+                        max="99">
 
-                      <input
-                          type="number"
-                          id="pathCount"
-                          class="form-control"
-                          value="6"
-                          min="1"
-                          max="99">
+                    <!-- Path Count Menu Button -->
+                    <div id="pathCountButton" class="path-count-arrow">
+                        <i class="bi bi-caret-down-fill"></i>
+                    </div>
 
-                      <div id="pathCountButton" class="path-count-arrow">
-                          <i class="bi bi-caret-down-fill"></i>
-                      </div>
-
-                      <div id="pathCountMenu" class="path-count-menu">
-                      </div>
-
+                    <!-- Path Count Menu -->
+                    <div id="pathCountMenu" class="path-count-menu">
+                    </div>
                   </div>
 
                   <span>paths</span>
-
                 </div>
+              </div>
 
             </div>
-
           </div>
         </div>
       </div>
-    </div>
 
+      <!-- Results Container (hidden & empty on page load)-->
       <div class="row justify-content-center" id="resultsContainer" style="display: none;">
         <div class="col-lg-8">
           <div class="card">
@@ -169,9 +183,10 @@
 
     </div>
 
+    <!-- About Modal -->
     <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
-      <div class="modal-dialog mt-5" style="max-width:450px;">
-        <div class="modal-content" style="max-height:80vh; overflow-y:auto;">
+      <div class="modal-dialog mt-5" style="max-width: 450px;">
+        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
           <div class="modal-header">
             <h5 class="modal-title" id="aboutModalLabel">About</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -199,202 +214,154 @@
       </div>
     </div>
 
+    <!-- JS -->
     <script>
+        /* Path Count Dropdown Functionality */
+        // Get the pathCount, pathCountMenu, and pathCountButton elements
         const input = document.getElementById("pathCount");
         const menu = document.getElementById("pathCountMenu");
         const button = document.getElementById("pathCountButton");
 
+        // Populate the pathCountMenu with numbers from 1 to 99
         for (let i = 1; i <= 99; i++) {
+            // Create a new div for each number
             const item = document.createElement("div");
             item.className = "path-count-item";
             item.textContent = i;
+
+            // When an item is clicked, 
+            // set the input value to that number and hide the menu
             item.onclick = function() {
                 input.value = i;
                 menu.classList.remove("show");
             };
+
+            // Append the item to the menu
             menu.appendChild(item);
         }
 
+        // When the pathCountButton is clicked, 
+        // highlight the current value in the menu and toggle its visibility
         button.onclick = function() {
+            // Get the current value of the input and convert it to an integer
             const current = parseInt(input.value);
-            menu.querySelectorAll(".path-count-item").forEach(item => {
 
+            // Highlight the corresponding item in the menu
+            menu.querySelectorAll(".path-count-item").forEach(item => {
                 item.style.background = "";
                 if (Number(item.textContent) === current) {
-
                     item.style.background = "#cfe2ff";
-
-                    item.scrollIntoView({
-                        block: "nearest"
-                    });
+                    item.scrollIntoView({block: "nearest"});
                 }
             });
 
+            // Open/close the menu
             menu.classList.toggle("show");
         };
 
+        // When clicking outside the pathCountContainer, close the menu
         document.addEventListener("click", function(e) {
-
           if (!e.target.closest(".path-count-container")) {
               menu.classList.remove("show");
           }
-
         });
 
+        // Handles when the user types in the pathCount input field
         input.addEventListener("input", function() {
+            // Let n be the integer value of the input field
             let n = parseInt(input.value);
 
+            // If n is not a number, return early
             if (isNaN(n))
               return;
 
+            // Restrict n to be between 1 and 99, and set the input value to n
             n = Math.max(1, Math.min(99, n));
             input.value = n;
-
         });
         
+        // Swap the values of the start and end article input fields
         function swap() {
+            // Get the start and end article input elements
             const start = document.getElementById("startArticle");
             const end = document.getElementById("endArticle");
 
+            // Swap their values
             [start.value, end.value] = [end.value, start.value];
         }
 
-        async function findPath() {
-            const start = document.getElementById("startArticle").value;
-            const end = document.getElementById("endArticle").value;
+        // Get a random start article and set it as the value of startArticle
+        function getRandomStart() {
+            // Fetch a random article from the Flask server
+            fetch("/random")
+                .then(response => response.json())
+                .then(data => {
+                    // Get the title of the random article
+                    const randomTitle = data.title;
+                    const startInput = document.getElementById("startArticle");
 
-            let n = parseInt(document.getElementById("pathCount").value);
-
-            if (isNaN(n)) {
-                n = 6;
-            }
-
-            n = Math.max(1, Math.min(n, 99));
-
-            document.getElementById("pathCount").value = n;
-
-            const resultsContainer = document.getElementById("resultsContainer");
-            const results = document.getElementById("results");
-
-            resultsContainer.style.display = "flex";
-            results.innerHTML = `
-                <div class="d-flex justify-content-center align-items-center py-4">
-                    <span class="me-2">Searching...</span>
-                    <div class="spinner-border spinner-border-sm" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            `;
-
-            const response = await fetch("/search", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    start: start,
-                    end: end,
-                    n: n
-                })
-            });
-
-            const data = await response.json();
-
-            results.innerHTML = "";
-
-            const timeLine = document.createElement("p");
-            timeLine.className = "text-muted mb-3";
-            
-            const pathWord = data.num_paths === 1 ? "path" : "paths";
-
-            if (data.path[1]) {
-                timeLine.textContent = `Found ${data.num_paths} ${pathWord} before timing out at ${data.time_str}`;
-            } else {
-                timeLine.textContent = `Found ${data.num_paths} ${pathWord} in ${data.time_str}.`;
-            }
-
-            results.appendChild(timeLine);
-
-            if (data.path[0]) {
-                let row;
-
-                data.path[0].forEach(function (path, index) {
-                    const heading = document.createElement("h6");
-                    heading.className = "mb-2";
-                    heading.textContent = `Path ${index + 1}`;  
-
-                    if (index % 3 === 0) {
-                      row = document.createElement("div");
-                      row.className = "row";
-                      results.appendChild(row);
-                    }
-
-                    const col = document.createElement("div");
-                    col.className = "col-12 col-md-6 col-lg-4 mb-3";
-
-                    const list = document.createElement("div");
-                    list.className = "list-group";
-
-                    path.forEach(function (title, titleIndex) {
-                        const item = document.createElement("a");
-                        item.className = "list-group-item list-group-item-action path-item";
-                        item.href = "https://en.wikipedia.org/wiki/" +
-                            encodeURIComponent(title.replace(/ /g, "_"));
-
-                        item.target = "_blank";
-                        item.rel = "noopener";
-                        item.textContent = title;
-
-                        const progress = path.length <= 1 ? 0 : titleIndex / (path.length - 1);
-                        const lightness = 96 - (25 * progress);
-
-                        item.style.setProperty("--path-color", `hsl(205, 70%, ${lightness}%)`);
-
-                        list.appendChild(item);
-                    });
-                    
-                    col.appendChild(heading);
-                    col.appendChild(list);
-                    row.appendChild(col);
+                    // Set the value of the start article as the random title
+                    startInput.value = randomTitle;
                 });
-            } else {
-                const notFound = document.createElement("p");
-                notFound.textContent = "No path found.";
-                results.appendChild(notFound);
-            }
-
         }
 
-        function setupAutocomplete(inputId, suggestionId) {
+        // Get a random end article and set it as the value of endArticle
+        function getRandomEnd() {
+            // Fetch a random article from the Flask server
+            fetch("/random")
+                .then(response => response.json())
+                .then(data => {
+                    // Get the title of the random article
+                    const randomTitle = data.title;
+                    const endInput = document.getElementById("endArticle");
 
+                    // Set the value of the end article as the random title
+                    endInput.value = randomTitle
+                });
+        }
+
+        // Autocomplete function takes in 
+        // the ID of the article input and the dropdown of suggestions
+        function setupAutocomplete(inputId, suggestionId) {
+            // Get the article input and dropdown of suggestions
             const input = document.getElementById(inputId);
             const suggestions = document.getElementById(suggestionId);
 
+            // When user types into article input
             input.addEventListener("input", function () {
 
+                // Get what's currently in the input
                 const text = input.value.trim();
 
+                // Style width of suggestions
                 suggestions.style.width = input.offsetWidth + "px";
 
+                // If user hasn't typed, no suggestions
                 if (text === "") {
                     suggestions.innerHTML = "";
                     suggestions.classList.remove("border", "rounded-bottom", "bg-white", "shadow-sm");
                     return;
                 }
 
+                // Fetch autocomplete results from Flask server
                 fetch("/autocomplete?q=" + encodeURIComponent(text))
                     .then(response => response.json())
                     .then(results => {
-
+                        // Clear previous suggestions
                         suggestions.innerHTML = "";
 
+                        // If results is empty string, no suggestions
                         if (results.length === 0) {
                             suggestions.classList.remove("border", "rounded-bottom", "bg-white", "shadow-sm");
                             return;
                         }
 
+                        // Style suggestions
                         suggestions.classList.add("border", "rounded-bottom", "bg-white", "shadow-sm");
 
+                        // For each suggestion returned by Flask,
+                        // create a clickable suggestion dropdown element
+                        // which fills in the article input when clicked
                         results.forEach(function(title) {
 
                             const item = document.createElement("button");
@@ -414,6 +381,7 @@
                     });
             });
 
+            // When clicking outside of suggestion dropdown, remove the dropdown
             document.addEventListener("click", function(e) {
               if (!input.contains(e.target) && !suggestions.contains(e.target)) {
                   suggestions.innerHTML = "";
@@ -423,41 +391,136 @@
 
         }
 
+        // Have autocomplete functionality for start and end article
         setupAutocomplete("startArticle", "startSuggestions");
         setupAutocomplete("endArticle", "endSuggestions");
 
-        function getRandomStart() {
-            fetch("/random")
-                .then(response => response.json())
-                .then(data => {
-                    const randomTitle = data.title;
-                    const startInput = document.getElementById("startArticle");
+        // Function to handle finding the article path
+        async function findPath() {
+            // Get the start and end articles
+            const start = document.getElementById("startArticle").value;
+            const end = document.getElementById("endArticle").value;
 
-                    if (startInput.value.trim() === "") {
-                        startInput.value = randomTitle;
-                    } else {
-                        startInput.value = randomTitle;
+            // Get the number of paths requested
+            let n = parseInt(document.getElementById("pathCount").value);
+
+            // Default the number of paths to 6 and make sure it's between 1 and 99
+            if (isNaN(n)) {
+                n = 6;
+            }
+            n = Math.max(1, Math.min(n, 99));
+
+            // Updates input box to be within 1 and 99
+            document.getElementById("pathCount").value = n;
+
+            // Get the resultsContainer and results div
+            const resultsContainer = document.getElementById("resultsContainer");
+            const results = document.getElementById("results");
+
+            // Display a "Searching..." screen while Flask is finding the paths
+            resultsContainer.style.display = "flex";
+            results.innerHTML = `
+                <div class="d-flex justify-content-center align-items-center py-4">
+                    <span class="me-2">Searching...</span>
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+            
+            // Sends POST request to Flask server to find the paths.
+            // Await the function's return before continuing
+            const response = await fetch("/search", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    start: start,
+                    end: end,
+                    n: n
+                })
+            });
+
+            // Get tuple of paths and whether or not Flask timed out once they're available
+            const data = await response.json();
+
+            // Remove "Searching..." screen
+            results.innerHTML = "";
+
+            // Create a message displaying number of paths and time taken
+            const timeLine = document.createElement("p");
+            timeLine.className = "text-muted mb-3";
+            
+            const pathWord = data.num_paths === 1 ? "path" : "paths";
+
+            if (data.path[1]) {
+                timeLine.textContent = `Found ${data.num_paths} ${pathWord} before timing out at ${data.time_str}`;
+            } else {
+                timeLine.textContent = `Found ${data.num_paths} ${pathWord} in ${data.time_str}.`;
+            }
+
+            results.appendChild(timeLine);
+
+            if (data.path[0]) {
+                // Create a Bootstrap row
+                let row;
+
+                // For each path, display it in the results container,
+                // 3 paths per row
+                data.path[0].forEach(function (path, index) {
+                    const heading = document.createElement("h6");
+                    heading.className = "mb-2";
+                    heading.textContent = `Path ${index + 1}`;  
+
+                    if (index % 3 === 0) {
+                      row = document.createElement("div");
+                      row.className = "row";
+                      results.appendChild(row);
                     }
-                });
-        }
 
-        function getRandomEnd() {
-            fetch("/random")
-                .then(response => response.json())
-                .then(data => {
-                    const randomTitle = data.title;
-                    const endInput = document.getElementById("endArticle");
+                    const col = document.createElement("div");
+                    col.className = "col-12 col-md-6 col-lg-4 mb-3";
 
-                    if (endInput.value.trim() === "") {
-                        endInput.value = randomTitle;
-                    } else {
-                        endInput.value = randomTitle;
-                    }
+                    const list = document.createElement("div");
+                    list.className = "list-group";
+
+                    // For each title in the path, add a link to it to the list group
+                    path.forEach(function (title, titleIndex) {
+                        const item = document.createElement("a");
+                        item.className = "list-group-item list-group-item-action path-item";
+                        item.href = "https://en.wikipedia.org/wiki/" +
+                            encodeURIComponent(title.replace(/ /g, "_"));
+
+                        item.target = "_blank";
+                        item.rel = "noopener";
+                        item.textContent = title;
+
+                        // Style a flag on the left portion of each list item
+                        const progress = path.length <= 1 ? 0 : titleIndex / (path.length - 1);
+                        const lightness = 96 - (25 * progress);
+
+                        item.style.setProperty("--path-color", `hsl(205, 70%, ${lightness}%)`);
+
+                        list.appendChild(item);
+                    });
+                    
+                    col.appendChild(heading);
+                    col.appendChild(list);
+                    row.appendChild(col);
                 });
+            } else {
+                // If no path found, say that there was no path found
+                const notFound = document.createElement("p");
+                notFound.textContent = "No path found.";
+                results.appendChild(notFound);
+            }
+
         }
 
     </script>
 
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
   </body>
