@@ -264,56 +264,66 @@ class WikiSearch:
         return [title_paths, timeout_flag]
 
     def canonical_node(self, node):
+        # If the node is a redirect to another node, set the node to what it redirects to
         if self.is_redirect_array[node] == 1:
-            node = self.forward_neighbors[self.forward_offsets[node]]
             node = self.forward_neighbors[self.forward_offsets[node]]
         return node
 
-
     def prefix_search(self, prefix, max_candidates=250000, limit=5):
+        # Set the prefix to lowercase
         prefix = prefix.lower()
 
+        # Find the indices of the first and last title strings with the prefix
         left = bisect.bisect_left(self.sorted_title_strings, prefix)
         right = bisect.bisect_left(self.sorted_title_strings, prefix + chr(255))
 
+        # If there's more titles than the pre-defined max_candidates we're checking, 
+        # then limit it to 250,000 candidates
         if right - left > max_candidates:
             right = left + max_candidates
 
-        candidates = sorted(
-            self.autocomplete[left:right],
-            key=lambda x: x[1],
-            reverse=True
-        )
+        # sort the candidates by the number of incoming links highest to lowest
+        candidates = sorted(self.autocomplete[left:right], 
+                            key = lambda x: x[1], reverse = True)
 
+        # Search if there's an article title that's the same as the prefix
         exact_node = None
         if left < len(self.sorted_title_strings) and self.sorted_title_strings[left] == prefix:
             exact_node = self.autocomplete[left][0]
 
+        # Results is the list of articles autocomplete suggests
         results = []
+        # Seen keeps track of canonical articles already included
         seen = set()
 
-        # Preserve exact match first
+        # Put exact match as first autocomplete result
         if exact_node is not None:
             canonical = self.canonical_node(exact_node)
             results.append((exact_node, self.titles[exact_node]))
             seen.add(canonical)
 
-        # Fill remaining slots
+        # Fill in remaining autocomplete results
         for node, _ in candidates:
+            # Don't include duplicates
             if node == exact_node:
                 continue
 
+            # Find the canonical node
             canonical = self.canonical_node(node)
 
+            # If it's already seen, don't include it
             if canonical in seen:
                 continue
 
+            # Else, add the node to the autocomplete results and its canonical node
             seen.add(canonical)
             results.append((node, self.titles[node]))
 
+            # Stop after 5 autocomplete results
             if len(results) == limit:
                 break
 
+        # Return autocomplete results
         return results
 
     def random_title(self):
