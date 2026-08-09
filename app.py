@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from bfs import WikiSearch
+from WikiGraph import WikiSearch
 
 import time
 
