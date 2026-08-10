@@ -1,4 +1,4 @@
-# Python Code - Wiki-Pathfinder
+# Core Logic - Wiki-Pathfinder
 
 ## Functions
 
