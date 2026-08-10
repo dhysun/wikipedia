@@ -17,5 +17,6 @@ A website that finds the shortest path (or paths) between any two articles on Wi
   - [Data Files](https://drive.google.com/drive/folders/1zovQapluH6LGg_0V8Q7cpqaH-F0wSjCb?usp=drive_link) - Uploads of the cleaned SQL tables and .bin files
 
 # Credits
+
   - [Wikipedia](https://www.wikipedia.org/) and the Wikipedia Speedrunning Community!
   - [Six Degrees of Wikipedia](https://www.sixdegreesofwikipedia.com/) for helping immensely with the initial research into building the project
