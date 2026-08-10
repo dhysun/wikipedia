@@ -7,7 +7,7 @@ A website that finds the shortest path (or paths) between any two articles on Wi
 ## Documentation
 
   - [Data](docs/Data.md) - Information on how to source and process the data used
-  - [Python Code](<docs/Core Logic.md>) - The design and thought process for the algorithms behind Wikipedia Pathfinder
+  - [Code Logic](<docs/Core Logic.md>) - The design and thought process for the algorithms behind Wikipedia Pathfinder
   - [Local Hosting](<docs/Local Hosting.md>) - Instructions to run your own local instance of Wikipedia Pathfinder!
 
 ## Data
